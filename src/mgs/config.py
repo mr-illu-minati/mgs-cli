@@ -33,6 +33,50 @@ def resolve_scopes() -> list[str] | None:
     return [s for s in raw.replace(",", " ").split() if s]
 
 
+def resolve_client_secret() -> str | None:
+    return _env("AZURE_CLIENT_SECRET") or _env("MGS_CLIENT_SECRET")
+
+
+def resolve_cert_path() -> str | None:
+    return _env("AZURE_CLIENT_CERTIFICATE_PATH") or _env("MGS_CLIENT_CERTIFICATE_PATH")
+
+
+def resolve_federated_token_file() -> str | None:
+    return _env("AZURE_FEDERATED_TOKEN_FILE")
+
+
+def resolve_explicit_client_id() -> str | None:
+    """Client id only if explicitly set (no builtin fallback) — for user-assigned managed identity."""
+    return _env("MGS_CLIENT_ID") or _env("AZURE_CLIENT_ID")
+
+
+AUTH_MODES = ("delegated", "app-only", "secret", "workload", "managed-identity")
+_AUTH_ALIASES = {"msi": "managed-identity", "interactive": "delegated"}
+
+
+def _ambient_app_only() -> bool:
+    """True when app-only credentials are detectably present (checked only when MGS_AUTH is unset)."""
+    if resolve_client_secret() or resolve_cert_path() or resolve_federated_token_file():
+        return True
+    # Env-based managed-identity endpoints (App Service / Functions / Container Apps / Arc / Cloud Shell).
+    # Plain-IMDS VMs expose no env var — those require explicit MGS_AUTH=managed-identity.
+    return bool(_env("IDENTITY_ENDPOINT") or _env("MSI_ENDPOINT"))
+
+
+def resolve_auth_mode() -> str:
+    """One of AUTH_MODES. Unset MGS_AUTH → 'delegated', or 'app-only' when ambient creds are present."""
+    raw = _env("MGS_AUTH")
+    if not raw:
+        return "app-only" if _ambient_app_only() else "delegated"
+    mode = raw.strip().lower()
+    mode = _AUTH_ALIASES.get(mode, mode)
+    if mode not in AUTH_MODES:
+        from mgs.errors import UsageError
+
+        raise UsageError(f"invalid MGS_AUTH={raw!r}; expected one of: {', '.join(AUTH_MODES)}")
+    return mode
+
+
 def config_dir() -> Path:
     override = _env("MGS_CONFIG_DIR")
     if override:
