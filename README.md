@@ -46,7 +46,9 @@ mgs schema mail                                  # introspect a service
 
 > Login works out of the box: `mgs` ships its own registered multi-tenant Entra app
 > ("mgs CLI"), so `mgs auth login` needs no setup. Organizations can bring their own app via
-> `MGS_CLIENT_ID`. Details, scopes, and admin consent: [docs/auth-production.md](docs/auth-production.md).
+> `MGS_CLIENT_ID`. For unattended/server/CI use, set `MGS_AUTH` for **app-only** auth (client
+> secret, workload identity federation, or managed identity). Details, scopes, and admin
+> consent: [docs/auth-production.md](docs/auth-production.md).
 
 ## Commands
 
@@ -125,6 +127,10 @@ token must be acquired or refreshed; a valid cached token skips it entirely.
 | `MGS_SCOPES` | Delegated Graph scopes to request at login (space/comma-separated; default: all). Handy with a minimal BYO app. |
 | `MGS_CONFIG_DIR` | Config dir override (default `~/.config/mgs`) |
 | `MGS_NO_BROWSER` | Use device-code login instead of the browser (headless/CI) |
+| `MGS_AUTH` | Auth mode: `delegated` (default), `app-only`, `secret`, `workload`, `managed-identity` — for unattended/server/CI use ([details](docs/auth-production.md)) |
+| `AZURE_CLIENT_SECRET` / `MGS_CLIENT_SECRET` | App-only client secret (service principal) |
+| `AZURE_CLIENT_CERTIFICATE_PATH` | App-only certificate (PEM) |
+| `AZURE_FEDERATED_TOKEN_FILE` | App-only workload identity federation (OIDC) token file |
 | `AZURE_CLIENT_ID` / `AZURE_TENANT_ID` | Standard fallbacks |
 
 ## License

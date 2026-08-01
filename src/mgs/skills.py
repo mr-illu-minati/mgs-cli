@@ -258,7 +258,9 @@ mgs schema <service>        # the service's properties, navigations, and bound a
 ## Environment Variables
 
 `MGS_TOKEN`, `MGS_CLIENT_ID`/`MGS_TENANT_ID`, `MGS_SCOPES`, `MGS_CONFIG_DIR`, `MGS_NO_BROWSER`,
-`AZURE_CLIENT_ID`/`AZURE_TENANT_ID`.
+`AZURE_CLIENT_ID`/`AZURE_TENANT_ID`. For unattended/server use set `MGS_AUTH`
+(`app-only`/`secret`/`workload`/`managed-identity`) with `AZURE_CLIENT_SECRET`,
+`AZURE_CLIENT_CERTIFICATE_PATH`, or `AZURE_FEDERATED_TOKEN_FILE`.
 """
 )
 

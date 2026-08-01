@@ -13,6 +13,9 @@ How `mgs` signs in to Microsoft Graph, the app it uses, and how to bring your ow
   silently refresh through the MSAL token cache when the access token expires.
 - `MGS_TOKEN` supplies a pre-obtained access token and bypasses login entirely.
 
+For unattended/server/CI use, `mgs` also supports **app-only** auth (the CLI acts as *itself*
+with application permissions) via `MGS_AUTH` — see [App-only auth](#app-only-auth-unattended--server--ci) below.
+
 Every public client needs a **client id**. (MSAL has no implicit default, and
 `azure-identity`'s `InteractiveBrowserCredential` default app is scoped for Azure Resource
 Manager, not Graph — so it can't serve `mgs`.)
@@ -82,6 +85,61 @@ Commands that need a scope you did not request return a clear permission error.
 account), `organizations` (work/school only), `consumers` (personal only), or a specific
 tenant id/domain to pin sign-in to one organization.
 
+## App-only auth (unattended / server / CI)
+
+Beyond the interactive delegated flows above, `mgs` can authenticate **as itself** with
+Microsoft Graph **application** permissions — for daemons, cron jobs, CI, and Azure-hosted
+workloads. Set `MGS_AUTH` to choose the track and, optionally, pin one mechanism:
+
+| `MGS_AUTH` | Behavior |
+|---|---|
+| *(unset)* / `delegated` | Interactive delegated login (browser/device). **Default.** |
+| `app-only` | Try, in order: client secret/cert → workload identity federation → managed identity. |
+| `secret` | Pin client secret or certificate only. |
+| `workload` | Pin workload identity federation (OIDC) only. |
+| `managed-identity` (alias `msi`) | Pin the Azure host's managed identity only. |
+
+When `MGS_AUTH` is **unset**, `mgs` auto-selects `app-only` if it detects app-only credentials
+in the environment (a client secret, `AZURE_FEDERATED_TOKEN_FILE`, or a managed-identity
+endpoint); otherwise it uses the delegated flow. Explicit `MGS_AUTH` always wins.
+
+**App-only uses application permissions, not delegated scopes.** Grant the app the Graph
+**application** permissions it needs (e.g. `Mail.Read`, `User.Read.All`) and have an admin
+consent to them once in Entra ID. `MGS_SCOPES` applies only to the delegated flow and is
+ignored here. App-only also requires a **specific tenant** — set `MGS_TENANT_ID` /
+`AZURE_TENANT_ID` (not `common`).
+
+Credentials are read from standard `AZURE_*` variables (with `MGS_*` aliases):
+
+| Purpose | Primary | Alias |
+|---|---|---|
+| Client id | `AZURE_CLIENT_ID` | `MGS_CLIENT_ID` |
+| Tenant id | `AZURE_TENANT_ID` | `MGS_TENANT_ID` |
+| Client secret | `AZURE_CLIENT_SECRET` | `MGS_CLIENT_SECRET` |
+| Certificate (PEM path) | `AZURE_CLIENT_CERTIFICATE_PATH` | `MGS_CLIENT_CERTIFICATE_PATH` |
+| Federated token file (OIDC) | `AZURE_FEDERATED_TOKEN_FILE` | — |
+| User-assigned MI client id | `AZURE_CLIENT_ID` | `MGS_CLIENT_ID` |
+
+```bash
+# Service principal with a secret
+export MGS_AUTH=secret
+export AZURE_TENANT_ID=contoso.onmicrosoft.com
+export AZURE_CLIENT_ID=<app-id>
+export AZURE_CLIENT_SECRET=<secret>
+mgs users +me
+
+# Azure VM / Container App with a managed identity
+export MGS_AUTH=managed-identity
+mgs mail +read
+
+# GitHub Actions via workload identity federation (OIDC)
+export MGS_AUTH=workload
+# AZURE_CLIENT_ID / AZURE_TENANT_ID / AZURE_FEDERATED_TOKEN_FILE injected by the OIDC step
+mgs users +me
+```
+
+No `azure-identity` dependency is required — `mgs` implements these flows directly on MSAL.
+
 ## Token storage
 
 MSAL's serialized token cache and a fast-path `token.json` are written to
@@ -92,6 +150,4 @@ via the OS keychain (`msal-extensions`) is a planned hardening step.
 
 - **Publisher verification** for the "mgs CLI" app — removes the "unverified app" consent
   banner and raises consent limits. Requires a Microsoft Partner account.
-- **App-only (client-credentials) flow** for unattended/server use, where the customer
-  registers their own app with a secret or certificate and application Graph permissions.
 - **OS-keychain-backed** encrypted token cache.
