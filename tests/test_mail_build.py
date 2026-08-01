@@ -2,7 +2,7 @@ import base64
 
 import pytest
 
-from mgs.errors import UsageError, ValidationError
+from mgs.errors import UsageError
 from mgs.helpers.mail_build import (
     build_message,
     file_attachment,
@@ -27,7 +27,9 @@ def test_build_message_text():
 
 
 def test_build_message_html_and_cc():
-    m = build_message("Hi", "<b>x</b>", html=True, to="a@x.com", cc="c@x.com", bcc=None, attach=None)
+    m = build_message(
+        "Hi", "<b>x</b>", html=True, to="a@x.com", cc="c@x.com", bcc=None, attach=None
+    )
     assert m["body"]["contentType"] == "HTML"
     assert m["ccRecipients"] == [{"emailAddress": {"address": "c@x.com"}}]
 

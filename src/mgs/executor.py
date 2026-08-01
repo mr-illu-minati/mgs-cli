@@ -43,10 +43,19 @@ class RequestPlan:
 def opts_from_namespace(ns: argparse.Namespace) -> Opts:
     g = lambda n, d=None: getattr(ns, n, d)
     return Opts(
-        select=g("select"), filter=g("filter"), orderby=g("orderby"), expand=g("expand"),
-        search=g("search"), top=g("top"), skip=g("skip"), page_all=g("page_all", False),
-        dry_run=g("dry_run", False), beta=g("beta", False), json=g("json"),
-        params=g("params"), folder=g("folder"),
+        select=g("select"),
+        filter=g("filter"),
+        orderby=g("orderby"),
+        expand=g("expand"),
+        search=g("search"),
+        top=g("top"),
+        skip=g("skip"),
+        page_all=g("page_all", False),
+        dry_run=g("dry_run", False),
+        beta=g("beta", False),
+        json=g("json"),
+        params=g("params"),
+        folder=g("folder"),
     )
 
 
@@ -61,8 +70,13 @@ def _parse_json(value: str | None, what: str) -> dict | None:
 
 def _query(opts: Opts) -> str:
     base = QueryOptions(
-        select=opts.select, filter=opts.filter, orderby=opts.orderby,
-        expand=opts.expand, search=opts.search, top=opts.top, skip=opts.skip,
+        select=opts.select,
+        filter=opts.filter,
+        orderby=opts.orderby,
+        expand=opts.expand,
+        search=opts.search,
+        top=opts.top,
+        skip=opts.skip,
     ).to_query_string()
     extra = _parse_json(opts.params, "params") or {}
     if not extra:

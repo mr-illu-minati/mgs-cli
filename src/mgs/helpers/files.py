@@ -39,12 +39,22 @@ class UploadHelper:
 
         if opts.dry_run:
             if small:
-                return {"dryRun": True, "mode": "small", "method": "PUT",
-                        "url": _base(opts.beta) + files_build.upload_content_path(remote), "size": size}
+                return {
+                    "dryRun": True,
+                    "mode": "small",
+                    "method": "PUT",
+                    "url": _base(opts.beta) + files_build.upload_content_path(remote),
+                    "size": size,
+                }
             chunk = files_build.normalize_chunk_size(ns.chunk_mb)
-            return {"dryRun": True, "mode": "session", "method": "POST",
-                    "url": _base(opts.beta) + files_build.upload_session_path(remote),
-                    "size": size, "chunks": len(files_build.compute_chunks(size, chunk))}
+            return {
+                "dryRun": True,
+                "mode": "session",
+                "method": "POST",
+                "url": _base(opts.beta) + files_build.upload_session_path(remote),
+                "size": size,
+                "chunks": len(files_build.compute_chunks(size, chunk)),
+            }
 
         from mgs.helpers import httpio
 
@@ -53,21 +63,27 @@ class UploadHelper:
 
         if small:
             url = _base(opts.beta) + files_build.upload_content_path(remote)
-            headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/octet-stream"}
+            headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/octet-stream",
+            }
             return httpio.put_bytes(url, data, headers)
 
         from mgs.client import GraphClient
 
         client = GraphClient(token, beta=opts.beta)
-        session = client.request("POST", client.full_url(files_build.upload_session_path(remote)),
-                                 body=files_build.session_body())
+        session = client.request(
+            "POST",
+            client.full_url(files_build.upload_session_path(remote)),
+            body=files_build.session_body(),
+        )
         upload_url = session.get("uploadUrl") if isinstance(session, dict) else None
         if not upload_url:
             raise UsageError("failed to create upload session")
         chunk_size = files_build.normalize_chunk_size(ns.chunk_mb)
         result = None
         for start, end in files_build.compute_chunks(size, chunk_size):
-            piece = data[start:end + 1]
+            piece = data[start : end + 1]
             headers = {
                 "Content-Length": str(len(piece)),
                 "Content-Range": f"bytes {start}-{end}/{size}",
@@ -100,8 +116,12 @@ class DownloadHelper:
         base = drive_item_base(ns.ref)
         resolve_url = _base(opts.beta) + base
         if opts.dry_run:
-            return {"dryRun": True, "method": "GET", "url": resolve_url,
-                    "out": ns.out or "(item name)"}
+            return {
+                "dryRun": True,
+                "method": "GET",
+                "url": resolve_url,
+                "out": ns.out or "(item name)",
+            }
 
         from mgs.client import GraphClient
         from mgs.helpers import httpio

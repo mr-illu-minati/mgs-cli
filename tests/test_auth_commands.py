@@ -2,9 +2,16 @@ from mgs.auth_commands import run, status_value
 
 
 def _clear_auth_env(monkeypatch):
-    for k in ("MGS_AUTH", "AZURE_CLIENT_SECRET", "MGS_CLIENT_SECRET",
-              "AZURE_CLIENT_CERTIFICATE_PATH", "MGS_CLIENT_CERTIFICATE_PATH",
-              "AZURE_FEDERATED_TOKEN_FILE", "IDENTITY_ENDPOINT", "MSI_ENDPOINT"):
+    for k in (
+        "MGS_AUTH",
+        "AZURE_CLIENT_SECRET",
+        "MGS_CLIENT_SECRET",
+        "AZURE_CLIENT_CERTIFICATE_PATH",
+        "MGS_CLIENT_CERTIFICATE_PATH",
+        "AZURE_FEDERATED_TOKEN_FILE",
+        "IDENTITY_ENDPOINT",
+        "MSI_ENDPOINT",
+    ):
         monkeypatch.delenv(k, raising=False)
 
 

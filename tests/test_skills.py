@@ -57,7 +57,9 @@ def test_service_skill_lists_helpers(tmp_path):
 
 def test_filter_limits_output(tmp_path):
     written = skills.generate(out_dir=str(tmp_path), filter="mail")
-    assert all("mail" in os.path.basename(os.path.dirname(p)) or p.endswith("SKILLS.md") is False
-               for p in written)
+    assert all(
+        "mail" in os.path.basename(os.path.dirname(p)) or p.endswith("SKILLS.md") is False
+        for p in written
+    )
     assert any("mgs-mail-send" in p for p in written)
     assert not os.path.exists(tmp_path / "mgs-calendar" / "SKILL.md")

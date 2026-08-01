@@ -13,14 +13,17 @@ def test_workbook_base_by_id_and_path():
 
 def test_read_range_path():
     assert read_range_path("01ABC", "Sheet1", None) == (
-        "/me/drive/items/01ABC/workbook/worksheets('Sheet1')/usedRange")
+        "/me/drive/items/01ABC/workbook/worksheets('Sheet1')/usedRange"
+    )
     assert read_range_path("01ABC", "Sheet1", "A1:C2") == (
-        "/me/drive/items/01ABC/workbook/worksheets('Sheet1')/range(address='A1%3AC2')")
+        "/me/drive/items/01ABC/workbook/worksheets('Sheet1')/range(address='A1%3AC2')"
+    )
 
 
 def test_append_path():
     assert append_path("01ABC", "Table1") == (
-        "/me/drive/items/01ABC/workbook/tables/Table1/rows/add")
+        "/me/drive/items/01ABC/workbook/tables/Table1/rows/add"
+    )
 
 
 def test_coerce_values():

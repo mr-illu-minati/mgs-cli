@@ -28,7 +28,7 @@ def _local(tag: str) -> str:
 
 def _unwrap_collection(type_name: str) -> tuple[str, bool]:
     if type_name.startswith("Collection(") and type_name.endswith(")"):
-        return type_name[len("Collection("):-1], True
+        return type_name[len("Collection(") : -1], True
     return type_name, False
 
 

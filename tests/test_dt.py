@@ -50,10 +50,16 @@ def test_build_attendees():
 
 def test_find_conflicts():
     events = [
-        {"subject": "Standup", "start": {"dateTime": "2026-07-01T09:00:00"},
-         "end": {"dateTime": "2026-07-01T09:30:00"}},
-        {"subject": "Lunch", "start": {"dateTime": "2026-07-01T12:00:00"},
-         "end": {"dateTime": "2026-07-01T13:00:00"}},
+        {
+            "subject": "Standup",
+            "start": {"dateTime": "2026-07-01T09:00:00"},
+            "end": {"dateTime": "2026-07-01T09:30:00"},
+        },
+        {
+            "subject": "Lunch",
+            "start": {"dateTime": "2026-07-01T12:00:00"},
+            "end": {"dateTime": "2026-07-01T13:00:00"},
+        },
     ]
     # 09:15-09:45 overlaps Standup, not Lunch
     hits = find_conflicts(datetime(2026, 7, 1, 9, 15), datetime(2026, 7, 1, 9, 45), events)

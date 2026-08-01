@@ -14,12 +14,26 @@ class ServiceEntry:
 
 
 SERVICES: tuple[ServiceEntry, ...] = (
-    ServiceEntry(("mail", "messages"), "/me/messages", "message", "Read, send, and manage Outlook mail"),
+    ServiceEntry(
+        ("mail", "messages"), "/me/messages", "message", "Read, send, and manage Outlook mail"
+    ),
     ServiceEntry(("calendar", "events"), "/me/events", "event", "Manage Outlook calendar events"),
-    ServiceEntry(("files", "drive"), "/me/drive/root/children", "driveItem", "Browse and manage OneDrive/SharePoint files"),
+    ServiceEntry(
+        ("files", "drive"),
+        "/me/drive/root/children",
+        "driveItem",
+        "Browse and manage OneDrive/SharePoint files",
+    ),
     ServiceEntry(("users", "people"), "/users", "user", "Look up users in the directory"),
-    ServiceEntry(("teams", "team"), "/me/joinedTeams", "team", "Microsoft Teams: teams, channels, messages"),
-    ServiceEntry(("excel", "workbook"), "/me/drive/root/children", "workbook", "Excel workbooks (helpers: +read/+append)"),
+    ServiceEntry(
+        ("teams", "team"), "/me/joinedTeams", "team", "Microsoft Teams: teams, channels, messages"
+    ),
+    ServiceEntry(
+        ("excel", "workbook"),
+        "/me/drive/root/children",
+        "workbook",
+        "Excel workbooks (helpers: +read/+append)",
+    ),
     ServiceEntry(("onenote", "notes"), "/me/onenote/pages", "onenotePage", "OneNote pages"),
 )
 

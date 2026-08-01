@@ -26,7 +26,9 @@ def _print_top_help() -> None:
     for s in services.all_services():
         print(f"  {s.aliases[0]:<10} {s.description}")
     print("\nRun `mgs <service> --help` to see that service's verbs and +helpers.")
-    print("Global flags: --dry-run  --beta  --page-all  --json  --params  --select/--filter/--top ...")
+    print(
+        "Global flags: --dry-run  --beta  --page-all  --json  --params  --select/--filter/--top ..."
+    )
 
 
 def _run(argv: list[str]) -> int:
@@ -122,7 +124,9 @@ def _run(argv: list[str]) -> int:
         from mgs import csdl
 
         beta = "--beta" in sub
-        valid = {op["name"].lower() for op in csdl.load_operations_bound_to(cfg, svc.entity_type, beta)}
+        valid = {
+            op["name"].lower() for op in csdl.load_operations_bound_to(cfg, svc.entity_type, beta)
+        }
         if verb.lower() not in valid:
             raise UsageError(
                 f"unknown action '{verb}' for {svc.aliases[0]}; valid actions: "

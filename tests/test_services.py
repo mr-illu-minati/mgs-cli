@@ -19,5 +19,6 @@ def test_all_services_lists_primary_names():
 
 def test_teams_service():
     from mgs.services import resolve
+
     assert resolve("teams").entity_type == "team"
     assert resolve("teams").root_path == "/me/joinedTeams"

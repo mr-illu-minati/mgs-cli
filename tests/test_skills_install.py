@@ -31,7 +31,7 @@ def test_install_prune_removes_stale_mgs_skills_only(tmp_path):
     (target / "my-own-skill").mkdir(parents=True)
     (target / "my-own-skill" / "SKILL.md").write_text("keep me")
     summary = skills.install(dir=str(tmp_path), targets=["claude"], prune=True)
-    assert not (target / "mgs-old-helper").exists()      # pruned
+    assert not (target / "mgs-old-helper").exists()  # pruned
     assert (target / "my-own-skill" / "SKILL.md").read_text() == "keep me"  # untouched
     assert summary[".claude/skills"]["removed"] >= 1
 

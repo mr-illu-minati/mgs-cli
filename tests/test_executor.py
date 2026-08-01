@@ -9,8 +9,15 @@ from mgs.services import resolve
 
 def _opts(**kw):
     ns = argparse.Namespace(
-        select=None, filter=None, orderby=None, expand=None, top=None, skip=None,
-        page_all=False, dry_run=False, beta=False,
+        select=None,
+        filter=None,
+        orderby=None,
+        expand=None,
+        top=None,
+        skip=None,
+        page_all=False,
+        dry_run=False,
+        beta=False,
     )
     for k, v in kw.items():
         setattr(ns, k, v)

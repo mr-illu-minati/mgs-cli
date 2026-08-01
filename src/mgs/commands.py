@@ -21,7 +21,9 @@ def _query(p: argparse.ArgumentParser) -> None:
     p.add_argument("--search", help="OData $search expression")
     p.add_argument("--top", type=int, help="OData $top (page size)")
     p.add_argument("--skip", type=int, help="OData $skip")
-    p.add_argument("--page-all", action="store_true", help="Follow @odata.nextLink and return all pages")
+    p.add_argument(
+        "--page-all", action="store_true", help="Follow @odata.nextLink and return all pages"
+    )
 
 
 def build_service_parser(svc: ServiceEntry) -> argparse.ArgumentParser:

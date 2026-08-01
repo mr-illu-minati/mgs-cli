@@ -50,11 +50,16 @@ def test_load_entity_type_reads_fresh_cache_without_network(tmp_path):
     # Pre-seed a fresh compact cache so no network/parse happens.
     d = tmp_path / "metadata" / "v1"
     (d / "types").mkdir(parents=True)
-    (d / "types" / "message.json").write_text(json.dumps({
-        "name": "message", "namespace": "microsoft.graph",
-        "properties": [["subject", "Edm.String", True]],
-        "navigations": [["attachments", "Collection(microsoft.graph.attachment)", True]],
-    }))
+    (d / "types" / "message.json").write_text(
+        json.dumps(
+            {
+                "name": "message",
+                "namespace": "microsoft.graph",
+                "properties": [["subject", "Edm.String", True]],
+                "navigations": [["attachments", "Collection(microsoft.graph.attachment)", True]],
+            }
+        )
+    )
     (d / "operations.json").write_text(json.dumps({}))
     (d / ".stamp").write_text(str(time.time()))
     et = load_entity_type(str(tmp_path), "message", beta=False)

@@ -3,7 +3,10 @@ from mgs.client import GraphClient, should_retry
 
 def test_full_url_joins_base_path_query():
     c = GraphClient("tok", beta=False)
-    assert c.full_url("/me/messages", "?%24top=5") == "https://graph.microsoft.com/v1.0/me/messages?%24top=5"
+    assert (
+        c.full_url("/me/messages", "?%24top=5")
+        == "https://graph.microsoft.com/v1.0/me/messages?%24top=5"
+    )
 
 
 def test_beta_base_url():

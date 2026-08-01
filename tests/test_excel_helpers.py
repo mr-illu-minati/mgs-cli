@@ -19,12 +19,16 @@ def test_read_dry_run_usedrange():
 
 
 def test_read_dry_run_range():
-    out = _run("+read", ["--file", "/Book.xlsx", "--sheet", "Sheet1", "--range", "A1:B2", "--dry-run"])
+    out = _run(
+        "+read", ["--file", "/Book.xlsx", "--sheet", "Sheet1", "--range", "A1:B2", "--dry-run"]
+    )
     assert "range(address='A1%3AB2')" in out["url"]
 
 
 def test_append_dry_run():
-    out = _run("+append", ["--file", "01ABC", "--table", "Table1", "--values", "a,1,2.5", "--dry-run"])
+    out = _run(
+        "+append", ["--file", "01ABC", "--table", "Table1", "--values", "a,1,2.5", "--dry-run"]
+    )
     assert out["method"] == "POST"
     assert out["url"].endswith("/workbook/tables/Table1/rows/add")
     assert out["body"] == {"values": [["a", 1, 2.5]]}

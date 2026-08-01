@@ -21,7 +21,9 @@ def teams_send_path(team: str | None, channel: str | None, chat: str | None) -> 
     if team and channel:
         validate_resource_name(team)
         validate_resource_name(channel)
-        return f"/teams/{encode_path_segment(team)}/channels/{encode_path_segment(channel)}/messages"
+        return (
+            f"/teams/{encode_path_segment(team)}/channels/{encode_path_segment(channel)}/messages"
+        )
     raise UsageError("provide --chat, or both --team and --channel")
 
 
@@ -96,7 +98,10 @@ class ChatsHelper:
         c = GraphClient(token, beta=opts.beta)
         resp = c.request("GET", c.full_url(path))
         items = resp.get("value", []) if isinstance(resp, dict) else []
-        return [{"id": x.get("id"), "topic": x.get("topic"), "chatType": x.get("chatType")} for x in items]
+        return [
+            {"id": x.get("id"), "topic": x.get("topic"), "chatType": x.get("chatType")}
+            for x in items
+        ]
 
 
 registry.register(SendHelper())

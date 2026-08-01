@@ -14,7 +14,9 @@ def _sample():
                 name="user",
                 namespace="microsoft.graph",
                 properties=[Property("displayName", "Edm.String", True)],
-                navigations=[NavigationProperty("messages", "Collection(microsoft.graph.message)", True)],
+                navigations=[
+                    NavigationProperty("messages", "Collection(microsoft.graph.message)", True)
+                ],
             ),
         ],
         actions=[Operation("sendMail", bound_to="user", parameters=[])],

@@ -12,9 +12,17 @@ from mgs import config
 from mgs.errors import AuthError
 
 SCOPES = [
-    "User.Read", "User.ReadBasic.All", "Mail.ReadWrite", "Mail.Send", "Calendars.ReadWrite",
-    "Files.ReadWrite.All", "Team.ReadBasic.All", "Channel.ReadBasic.All", "ChannelMessage.Send",
-    "Chat.ReadWrite", "Notes.ReadWrite",
+    "User.Read",
+    "User.ReadBasic.All",
+    "Mail.ReadWrite",
+    "Mail.Send",
+    "Calendars.ReadWrite",
+    "Files.ReadWrite.All",
+    "Team.ReadBasic.All",
+    "Channel.ReadBasic.All",
+    "ChannelMessage.Send",
+    "Chat.ReadWrite",
+    "Notes.ReadWrite",
 ]
 SKEW_SECS = 60
 

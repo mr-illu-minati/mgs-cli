@@ -4,9 +4,12 @@ from mgs.schema import schema_from
 
 def test_schema_from_lists_properties_navigations_operations():
     et = EntityType(
-        name="message", namespace="microsoft.graph",
+        name="message",
+        namespace="microsoft.graph",
         properties=[Property("subject", "Edm.String", True)],
-        navigations=[NavigationProperty("attachments", "Collection(microsoft.graph.attachment)", True)],
+        navigations=[
+            NavigationProperty("attachments", "Collection(microsoft.graph.attachment)", True)
+        ],
     )
     ops = [{"name": "reply", "parameters": [["comment", "Edm.String"]]}]
     v = schema_from(et, ops)

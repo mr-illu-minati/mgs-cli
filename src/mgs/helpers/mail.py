@@ -36,7 +36,11 @@ def render_message(msg: dict) -> dict:
 def _dry_or_send(method: str, path: str, body: dict | None, opts: Opts, token: str) -> object:
     if opts.dry_run:
         version = "beta" if opts.beta else "v1.0"
-        out = {"dryRun": True, "method": method, "url": f"https://graph.microsoft.com/{version}{path}"}
+        out = {
+            "dryRun": True,
+            "method": method,
+            "url": f"https://graph.microsoft.com/{version}{path}",
+        }
         if body is not None:
             out["body"] = body
         return out
@@ -65,11 +69,19 @@ class SendHelper:
 
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
         message = mail_build.build_message(
-            ns.subject, ns.body, html=ns.html, to=ns.to, cc=ns.cc, bcc=ns.bcc, attach=ns.attach,
+            ns.subject,
+            ns.body,
+            html=ns.html,
+            to=ns.to,
+            cc=ns.cc,
+            bcc=ns.bcc,
+            attach=ns.attach,
         )
         if ns.draft:
             return _dry_or_send("POST", "/me/messages", message, opts, token)
-        return _dry_or_send("POST", "/me/sendMail", {"message": message, "saveToSentItems": True}, opts, token)
+        return _dry_or_send(
+            "POST", "/me/sendMail", {"message": message, "saveToSentItems": True}, opts, token
+        )
 
 
 class ReadHelper:
@@ -89,7 +101,11 @@ class ReadHelper:
         path = f"/me/messages/{encode_path_segment(ns.id)}"
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
-            return {"dryRun": True, "method": "GET", "url": f"https://graph.microsoft.com/{version}{path}"}
+            return {
+                "dryRun": True,
+                "method": "GET",
+                "url": f"https://graph.microsoft.com/{version}{path}",
+            }
         from mgs.client import GraphClient
 
         client = GraphClient(token, beta=opts.beta)
@@ -190,19 +206,24 @@ class TriageHelper:
         p.add_argument("--beta", action="store_true")
 
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
-        from mgs.validate import encode_path_segment
         from mgs.odata import QueryOptions
+        from mgs.validate import encode_path_segment
 
         folder = encode_path_segment(ns.folder)
         query = QueryOptions(
-            filter="isRead eq false", top=ns.max,
+            filter="isRead eq false",
+            top=ns.max,
             select="subject,from,receivedDateTime,hasAttachments",
             orderby="receivedDateTime desc",
         ).to_query_string()
         path = f"/me/mailFolders/{folder}/messages{query}"
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
-            return {"dryRun": True, "method": "GET", "url": f"https://graph.microsoft.com/{version}{path}"}
+            return {
+                "dryRun": True,
+                "method": "GET",
+                "url": f"https://graph.microsoft.com/{version}{path}",
+            }
         from mgs.client import GraphClient
 
         client = GraphClient(token, beta=opts.beta)

@@ -70,13 +70,17 @@ class AgendaHelper:
         path = _calendarview_path(s, e, ns.max)
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
-            return {"dryRun": True, "method": "GET",
-                    "url": f"https://graph.microsoft.com/{version}{path}"}
+            return {
+                "dryRun": True,
+                "method": "GET",
+                "url": f"https://graph.microsoft.com/{version}{path}",
+            }
         from mgs.client import GraphClient
 
         client = GraphClient(token, beta=opts.beta)
-        resp = client.request("GET", client.full_url(path),
-                              headers={"Prefer": f'outlook.timezone="{tz}"'})
+        resp = client.request(
+            "GET", client.full_url(path), headers={"Prefer": f'outlook.timezone="{tz}"'}
+        )
         events = resp.get("value", []) if isinstance(resp, dict) else []
         return {
             "window": {"start": dt.iso(s), "end": dt.iso(e), "timezone": tz},
@@ -146,14 +150,25 @@ class InsertHelper:
 
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
         event, s_dt, e_dt = build_event(
-            subject=ns.subject, start=ns.start, end=ns.end, duration=ns.duration,
-            tz=ns.timezone, attendees=ns.attendees, location=ns.location, body=ns.body,
-            all_day=ns.all_day, online=ns.online,
+            subject=ns.subject,
+            start=ns.start,
+            end=ns.end,
+            duration=ns.duration,
+            tz=ns.timezone,
+            attendees=ns.attendees,
+            location=ns.location,
+            body=ns.body,
+            all_day=ns.all_day,
+            online=ns.online,
         )
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
-            return {"dryRun": True, "method": "POST",
-                    "url": f"https://graph.microsoft.com/{version}/me/events", "body": event}
+            return {
+                "dryRun": True,
+                "method": "POST",
+                "url": f"https://graph.microsoft.com/{version}/me/events",
+                "body": event,
+            }
 
         from mgs.client import GraphClient
 
@@ -161,13 +176,18 @@ class InsertHelper:
         conflicts = []
         if not ns.no_conflict_check:
             path = _calendarview_path(s_dt, e_dt, 50)
-            resp = client.request("GET", client.full_url(path),
-                                  headers={"Prefer": f'outlook.timezone="{ns.timezone}"'})
+            resp = client.request(
+                "GET",
+                client.full_url(path),
+                headers={"Prefer": f'outlook.timezone="{ns.timezone}"'},
+            )
             value = resp.get("value", []) if isinstance(resp, dict) else []
             conflicts = dt.find_conflicts(s_dt, e_dt, value)
         created = client.request("POST", client.full_url("/me/events"), body=event)
-        result = {"created": created.get("id") if isinstance(created, dict) else None,
-                  "event": render_event(created if isinstance(created, dict) else event)}
+        result = {
+            "created": created.get("id") if isinstance(created, dict) else None,
+            "event": render_event(created if isinstance(created, dict) else event),
+        }
         if conflicts:
             result["conflicts"] = conflicts
         return result

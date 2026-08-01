@@ -13,7 +13,9 @@ def _fake_msal(monkeypatch):
     class FakeConfidential:
         def __init__(self, client_id, authority=None, client_credential=None):
             captured["confidential"] = {
-                "client_id": client_id, "authority": authority, "cred": client_credential,
+                "client_id": client_id,
+                "authority": authority,
+                "cred": client_credential,
             }
 
         def acquire_token_for_client(self, scopes=None):
@@ -28,6 +30,7 @@ def _fake_msal(monkeypatch):
 
 def test_confidential_token_builds_client_and_requests_default_scope(monkeypatch):
     from mgs import auth
+
     captured = _fake_msal(monkeypatch)
     monkeypatch.setenv("MGS_TENANT_ID", "contoso.onmicrosoft.com")
     monkeypatch.setenv("MGS_CLIENT_ID", "the-client")
@@ -40,6 +43,7 @@ def test_confidential_token_builds_client_and_requests_default_scope(monkeypatch
 
 def test_confidential_token_rejects_common_tenant(monkeypatch):
     from mgs import auth
+
     _fake_msal(monkeypatch)
     monkeypatch.setenv("MGS_TENANT_ID", "common")
     with pytest.raises(AuthError):
@@ -49,25 +53,33 @@ def test_confidential_token_rejects_common_tenant(monkeypatch):
 def test_cert_thumbprint_is_sha1_of_der(monkeypatch, tmp_path):
     import base64
     import hashlib
+
     from mgs import auth
+
     der = b"hello-der-bytes"
-    pem = ("-----BEGIN CERTIFICATE-----\n"
-           + base64.encodebytes(der).decode()
-           + "-----END CERTIFICATE-----\n")
+    pem = (
+        "-----BEGIN CERTIFICATE-----\n"
+        + base64.encodebytes(der).decode()
+        + "-----END CERTIFICATE-----\n"
+    )
     assert auth._cert_thumbprint(pem) == hashlib.sha1(der).hexdigest()
 
 
 def test_client_credential_prefers_secret_then_cert(monkeypatch, tmp_path):
     import base64
+
     from mgs import auth
+
     monkeypatch.delenv("AZURE_CLIENT_SECRET", raising=False)
     monkeypatch.delenv("MGS_CLIENT_SECRET", raising=False)
     monkeypatch.delenv("AZURE_CLIENT_CERTIFICATE_PATH", raising=False)
     monkeypatch.delenv("MGS_CLIENT_CERTIFICATE_PATH", raising=False)
     assert auth._client_credential() is None
-    pem = ("-----BEGIN CERTIFICATE-----\n"
-           + base64.encodebytes(b"der").decode()
-           + "-----END CERTIFICATE-----\n")
+    pem = (
+        "-----BEGIN CERTIFICATE-----\n"
+        + base64.encodebytes(b"der").decode()
+        + "-----END CERTIFICATE-----\n"
+    )
     p = tmp_path / "c.pem"
     p.write_text(pem)
     monkeypatch.setenv("MGS_CLIENT_CERTIFICATE_PATH", str(p))
@@ -79,16 +91,26 @@ def test_client_credential_prefers_secret_then_cert(monkeypatch, tmp_path):
 
 def test_secret_token_optional_returns_none_when_no_cred(monkeypatch):
     from mgs import auth
-    for k in ("AZURE_CLIENT_SECRET", "MGS_CLIENT_SECRET",
-              "AZURE_CLIENT_CERTIFICATE_PATH", "MGS_CLIENT_CERTIFICATE_PATH"):
+
+    for k in (
+        "AZURE_CLIENT_SECRET",
+        "MGS_CLIENT_SECRET",
+        "AZURE_CLIENT_CERTIFICATE_PATH",
+        "MGS_CLIENT_CERTIFICATE_PATH",
+    ):
         monkeypatch.delenv(k, raising=False)
     assert auth._secret_token(optional=True) is None
 
 
 def test_secret_token_required_raises_when_no_cred(monkeypatch):
     from mgs import auth
-    for k in ("AZURE_CLIENT_SECRET", "MGS_CLIENT_SECRET",
-              "AZURE_CLIENT_CERTIFICATE_PATH", "MGS_CLIENT_CERTIFICATE_PATH"):
+
+    for k in (
+        "AZURE_CLIENT_SECRET",
+        "MGS_CLIENT_SECRET",
+        "AZURE_CLIENT_CERTIFICATE_PATH",
+        "MGS_CLIENT_CERTIFICATE_PATH",
+    ):
         monkeypatch.delenv(k, raising=False)
     with pytest.raises(AuthError):
         auth._secret_token(optional=False)
@@ -96,6 +118,7 @@ def test_secret_token_required_raises_when_no_cred(monkeypatch):
 
 def test_workload_token_reads_assertion_file(monkeypatch, tmp_path):
     from mgs import auth
+
     captured = _fake_msal(monkeypatch)
     monkeypatch.setenv("MGS_TENANT_ID", "contoso")
     monkeypatch.setenv("MGS_CLIENT_ID", "cid")
@@ -109,6 +132,7 @@ def test_workload_token_reads_assertion_file(monkeypatch, tmp_path):
 
 def test_workload_token_required_raises_without_file(monkeypatch):
     from mgs import auth
+
     monkeypatch.delenv("AZURE_FEDERATED_TOKEN_FILE", raising=False)
     with pytest.raises(AuthError):
         auth._workload_token(optional=False)
@@ -116,6 +140,7 @@ def test_workload_token_required_raises_without_file(monkeypatch):
 
 def test_mi_token_uses_managed_identity_client(monkeypatch):
     from mgs import auth
+
     captured = {}
 
     class FakeMI:
@@ -148,6 +173,7 @@ def test_mi_token_uses_managed_identity_client(monkeypatch):
 
 def test_acquire_app_only_pinned_secret_writes_cache(monkeypatch, tmp_path):
     from mgs import auth
+
     _fake_msal(monkeypatch)
     monkeypatch.setenv("MGS_TENANT_ID", "contoso")
     monkeypatch.setenv("MGS_CLIENT_ID", "cid")
@@ -175,9 +201,15 @@ def test_acquire_app_only_chain_falls_through_to_mi(monkeypatch, tmp_path):
     fake.UserAssignedManagedIdentity = lambda client_id: ("user", client_id)
     monkeypatch.setitem(sys.modules, "msal", fake)
     monkeypatch.setitem(sys.modules, "requests", types.SimpleNamespace(Session=lambda: "s"))
-    for k in ("AZURE_CLIENT_SECRET", "MGS_CLIENT_SECRET", "AZURE_CLIENT_CERTIFICATE_PATH",
-              "MGS_CLIENT_CERTIFICATE_PATH", "AZURE_FEDERATED_TOKEN_FILE",
-              "MGS_CLIENT_ID", "AZURE_CLIENT_ID"):
+    for k in (
+        "AZURE_CLIENT_SECRET",
+        "MGS_CLIENT_SECRET",
+        "AZURE_CLIENT_CERTIFICATE_PATH",
+        "MGS_CLIENT_CERTIFICATE_PATH",
+        "AZURE_FEDERATED_TOKEN_FILE",
+        "MGS_CLIENT_ID",
+        "AZURE_CLIENT_ID",
+    ):
         monkeypatch.delenv(k, raising=False)
     tok = auth._acquire_app_only(str(tmp_path), "app-only")
     assert tok == "mi-tok"
@@ -185,9 +217,14 @@ def test_acquire_app_only_chain_falls_through_to_mi(monkeypatch, tmp_path):
 
 def test_acquire_app_only_pinned_secret_missing_cred_raises(monkeypatch, tmp_path):
     from mgs import auth
+
     _fake_msal(monkeypatch)
-    for k in ("AZURE_CLIENT_SECRET", "MGS_CLIENT_SECRET",
-              "AZURE_CLIENT_CERTIFICATE_PATH", "MGS_CLIENT_CERTIFICATE_PATH"):
+    for k in (
+        "AZURE_CLIENT_SECRET",
+        "MGS_CLIENT_SECRET",
+        "AZURE_CLIENT_CERTIFICATE_PATH",
+        "MGS_CLIENT_CERTIFICATE_PATH",
+    ):
         monkeypatch.delenv(k, raising=False)
     with pytest.raises(AuthError):
         auth._acquire_app_only(str(tmp_path), "secret")
@@ -195,6 +232,7 @@ def test_acquire_app_only_pinned_secret_missing_cred_raises(monkeypatch, tmp_pat
 
 def test_get_token_routes_app_only(monkeypatch, tmp_path):
     from mgs import auth
+
     _fake_msal(monkeypatch)
     monkeypatch.delenv("MGS_TOKEN", raising=False)
     monkeypatch.setenv("MGS_AUTH", "secret")
@@ -206,6 +244,7 @@ def test_get_token_routes_app_only(monkeypatch, tmp_path):
 
 def test_get_token_env_and_cache_win_over_app_only(monkeypatch, tmp_path):
     from mgs import auth
+
     monkeypatch.setenv("MGS_AUTH", "secret")  # would fail (no creds) if reached
     monkeypatch.setenv("MGS_TOKEN", "env-tok")
     assert auth.get_token(str(tmp_path)) == "env-tok"
@@ -216,6 +255,7 @@ def test_get_token_env_and_cache_win_over_app_only(monkeypatch, tmp_path):
 
 def test_login_app_only_does_credential_check(monkeypatch, tmp_path):
     from mgs import auth
+
     _fake_msal(monkeypatch)
     monkeypatch.setenv("MGS_AUTH", "secret")
     monkeypatch.setenv("MGS_TENANT_ID", "contoso")

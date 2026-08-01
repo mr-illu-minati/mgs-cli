@@ -1,8 +1,10 @@
 import argparse
 
 from mgs.executor import opts_from_namespace
-from mgs.helpers import calendar  # noqa: F401  (registers helpers)
-from mgs.helpers import registry
+from mgs.helpers import (
+    calendar,  # noqa: F401  (registers helpers)
+    registry,
+)
 from mgs.helpers.calendar import build_event, render_event
 
 
@@ -20,7 +22,9 @@ def test_agenda_registered():
 
 
 def test_agenda_dry_run_uses_calendarview():
-    out = _run("+agenda", ["--start", "2026-07-01", "--days", "1", "--timezone", "UTC", "--dry-run"])
+    out = _run(
+        "+agenda", ["--start", "2026-07-01", "--days", "1", "--timezone", "UTC", "--dry-run"]
+    )
     assert out["method"] == "GET"
     assert "/me/calendarView" in out["url"]
     assert "startDateTime=2026-07-01T00%3A00%3A00" in out["url"]
@@ -34,7 +38,9 @@ def test_agenda_week_window():
 
 def test_render_event():
     ev = {
-        "subject": "Sync", "isAllDay": False, "isOnlineMeeting": True,
+        "subject": "Sync",
+        "isAllDay": False,
+        "isOnlineMeeting": True,
         "start": {"dateTime": "2026-07-01T09:00:00.0000000"},
         "end": {"dateTime": "2026-07-01T09:30:00.0000000"},
         "location": {"displayName": "Room 4"},
@@ -43,16 +49,29 @@ def test_render_event():
     }
     r = render_event(ev)
     assert r == {
-        "start": "2026-07-01T09:00:00.0000000", "end": "2026-07-01T09:30:00.0000000",
-        "subject": "Sync", "location": "Room 4", "organizer": "Al <al@x.com>",
-        "attendees": 2, "isAllDay": False, "isOnline": True,
+        "start": "2026-07-01T09:00:00.0000000",
+        "end": "2026-07-01T09:30:00.0000000",
+        "subject": "Sync",
+        "location": "Room 4",
+        "organizer": "Al <al@x.com>",
+        "attendees": 2,
+        "isAllDay": False,
+        "isOnline": True,
     }
 
 
 def test_build_event_with_duration():
     ev, s, e = build_event(
-        subject="Sync", start="2026-07-01T14:00", end=None, duration=30, tz="UTC",
-        attendees="a@x.com", location="Room 4", body="agenda", all_day=False, online=True,
+        subject="Sync",
+        start="2026-07-01T14:00",
+        end=None,
+        duration=30,
+        tz="UTC",
+        attendees="a@x.com",
+        location="Room 4",
+        body="agenda",
+        all_day=False,
+        online=True,
     )
     assert ev["subject"] == "Sync"
     assert ev["start"] == {"dateTime": "2026-07-01T14:00:00", "timeZone": "UTC"}
@@ -64,15 +83,34 @@ def test_build_event_with_duration():
 
 def test_build_event_explicit_end_overrides_duration():
     ev, s, e = build_event(
-        subject="X", start="2026-07-01T14:00", end="2026-07-01T15:30", duration=30, tz="UTC",
-        attendees=None, location=None, body=None, all_day=False, online=False,
+        subject="X",
+        start="2026-07-01T14:00",
+        end="2026-07-01T15:30",
+        duration=30,
+        tz="UTC",
+        attendees=None,
+        location=None,
+        body=None,
+        all_day=False,
+        online=False,
     )
     assert ev["end"]["dateTime"] == "2026-07-01T15:30:00"
 
 
 def test_insert_dry_run_shows_event_no_conflict_call():
-    out = _run("+insert", ["--subject", "Sync", "--start", "2026-07-01T14:00",
-                           "--duration", "30", "--no-conflict-check", "--dry-run"])
+    out = _run(
+        "+insert",
+        [
+            "--subject",
+            "Sync",
+            "--start",
+            "2026-07-01T14:00",
+            "--duration",
+            "30",
+            "--no-conflict-check",
+            "--dry-run",
+        ],
+    )
     assert out["method"] == "POST"
     assert out["url"].endswith("/me/events")
     assert out["body"]["subject"] == "Sync"

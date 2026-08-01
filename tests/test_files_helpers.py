@@ -1,8 +1,10 @@
 import argparse
 
 from mgs.executor import opts_from_namespace
-from mgs.helpers import files  # noqa: F401  (registers helpers)
-from mgs.helpers import registry
+from mgs.helpers import (
+    files,  # noqa: F401  (registers helpers)
+    registry,
+)
 
 
 def _run(verb, args):

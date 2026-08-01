@@ -23,10 +23,16 @@ def test_bound_action_dry_run_validates_against_metadata(capsys, monkeypatch, tm
     # Seed a fresh metadata cache so no network is needed.
     d = tmp_path / "metadata" / "v1"
     (d / "types").mkdir(parents=True)
-    (d / "types" / "message.json").write_text(json.dumps(
-        {"name": "message", "namespace": "microsoft.graph", "properties": [], "navigations": []}))
-    (d / "operations.json").write_text(json.dumps({"message": [{"name": "move", "parameters": []}]}))
+    (d / "types" / "message.json").write_text(
+        json.dumps(
+            {"name": "message", "namespace": "microsoft.graph", "properties": [], "navigations": []}
+        )
+    )
+    (d / "operations.json").write_text(
+        json.dumps({"message": [{"name": "move", "parameters": []}]})
+    )
     import time
+
     (d / ".stamp").write_text(str(time.time()))
     assert main(["mail", "move", "AAA", "--json", '{"destinationId":"archive"}', "--dry-run"]) == 0
     out = json.loads(capsys.readouterr().out)
@@ -38,10 +44,16 @@ def test_unknown_action_is_usage_error(capsys, monkeypatch, tmp_path):
     monkeypatch.setenv("MGS_CONFIG_DIR", str(tmp_path))
     d = tmp_path / "metadata" / "v1"
     (d / "types").mkdir(parents=True)
-    (d / "types" / "message.json").write_text(json.dumps(
-        {"name": "message", "namespace": "microsoft.graph", "properties": [], "navigations": []}))
-    (d / "operations.json").write_text(json.dumps({"message": [{"name": "move", "parameters": []}]}))
+    (d / "types" / "message.json").write_text(
+        json.dumps(
+            {"name": "message", "namespace": "microsoft.graph", "properties": [], "navigations": []}
+        )
+    )
+    (d / "operations.json").write_text(
+        json.dumps({"message": [{"name": "move", "parameters": []}]})
+    )
     import time
+
     (d / ".stamp").write_text(str(time.time()))
     assert main(["mail", "bogusaction", "AAA", "--dry-run"]) == 2
     assert "bogusaction" in json.loads(capsys.readouterr().err)["error"]["message"]

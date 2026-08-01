@@ -30,8 +30,13 @@ class WriteHelper:
         page = onenote_build.build_page_html(ns.title, ns.content, ns.html)
         url = _base(opts.beta) + path
         if opts.dry_run:
-            return {"dryRun": True, "method": "POST", "url": url,
-                    "contentType": "text/html", "html": page}
+            return {
+                "dryRun": True,
+                "method": "POST",
+                "url": url,
+                "contentType": "text/html",
+                "html": page,
+            }
         from mgs.helpers import httpio
 
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "text/html"}

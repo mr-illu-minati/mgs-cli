@@ -14,11 +14,7 @@ def build_page_html(title: str, content: str, is_html: bool) -> str:
         escaped = htmllib.escape(content or "")
         body = "<p>" + escaped.replace("\n", "</p><p>") + "</p>"
     t = htmllib.escape(title or "")
-    return (
-        "<!DOCTYPE html><html><head>"
-        f"<title>{t}</title></head>"
-        f"<body>{body}</body></html>"
-    )
+    return f"<!DOCTYPE html><html><head><title>{t}</title></head><body>{body}</body></html>"
 
 
 def pages_path(section: str | None) -> str:

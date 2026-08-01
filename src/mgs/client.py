@@ -28,8 +28,9 @@ class GraphClient:
     def full_url(self, path: str, query: str = "") -> str:
         return f"{self.base}{path}{query}"
 
-    def request(self, method: str, url: str, body: dict | None = None,
-                headers: dict | None = None) -> object:
+    def request(
+        self, method: str, url: str, body: dict | None = None, headers: dict | None = None
+    ) -> object:
         data = json.dumps(body).encode() if body is not None else None
         hdrs = {"Authorization": f"Bearer {self.token}"}
         if data is not None:
@@ -47,9 +48,9 @@ class GraphClient:
                 status = e.code
                 if should_retry(status) and attempt < MAX_RETRIES:
                     try:
-                        wait = int(e.headers.get("Retry-After", 2 ** attempt))
+                        wait = int(e.headers.get("Retry-After", 2**attempt))
                     except (TypeError, ValueError):
-                        wait = 2 ** attempt
+                        wait = 2**attempt
                     time.sleep(min(wait, RETRY_AFTER_CAP))
                     attempt += 1
                     continue

@@ -63,9 +63,11 @@ def find_conflicts(start: datetime, end: datetime, events: list[dict]) -> list[d
             continue
         s, e = bounds
         if s < end and e > start:
-            hits.append({
-                "subject": ev.get("subject"),
-                "start": ev.get("start", {}).get("dateTime"),
-                "end": ev.get("end", {}).get("dateTime"),
-            })
+            hits.append(
+                {
+                    "subject": ev.get("subject"),
+                    "start": ev.get("start", {}).get("dateTime"),
+                    "end": ev.get("end", {}).get("dateTime"),
+                }
+            )
     return hits

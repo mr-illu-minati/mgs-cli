@@ -10,8 +10,13 @@ from mgs import __version__, services
 from mgs.helpers import registry
 
 PRODUCT = {
-    "mail": "Mail", "calendar": "Calendar", "files": "Files", "users": "Users",
-    "teams": "Teams", "excel": "Excel", "onenote": "OneNote",
+    "mail": "Mail",
+    "calendar": "Calendar",
+    "files": "Files",
+    "users": "Users",
+    "teams": "Teams",
+    "excel": "Excel",
+    "onenote": "OneNote",
 }
 
 # Hand-written examples/tips for flagship helpers, keyed by skill name.
@@ -23,8 +28,10 @@ CURATED: dict[str, dict] = {
             "mgs mail +send --to a@x.com --subject 'Bold' --body '<b>hi</b>' --html",
             "mgs mail +send --to a@x.com --subject Draft --body 'wip' --draft",
         ],
-        "tips": ["Total attachments must stay under 25 MB.",
-                 "Use --draft to save to Drafts instead of sending."],
+        "tips": [
+            "Total attachments must stay under 25 MB.",
+            "Use --draft to save to Drafts instead of sending.",
+        ],
     },
     "mgs-mail-read": {
         "examples": ["mgs mail +read <MESSAGE_ID>"],
@@ -35,8 +42,10 @@ CURATED: dict[str, dict] = {
         "tips": ["Read-only; returns a ranked summary of unread mail for quick scanning."],
     },
     "mgs-calendar-agenda": {
-        "examples": ["mgs calendar +agenda --week --timezone America/Toronto",
-                     "mgs calendar +agenda --start 2026-07-01 --days 1"],
+        "examples": [
+            "mgs calendar +agenda --week --timezone America/Toronto",
+            "mgs calendar +agenda --start 2026-07-01 --days 1",
+        ],
         "tips": ["Uses calendarView, so recurring events are expanded into instances."],
     },
     "mgs-calendar-insert": {
@@ -44,17 +53,23 @@ CURATED: dict[str, dict] = {
             "mgs calendar +insert --subject Sync --start 2026-07-01T14:00 --duration 30 --attendees a@x.com",
             "mgs calendar +insert --subject Review --start 2026-07-01T15:00 --end 2026-07-01T16:00 --online",
         ],
-        "tips": ["Conflicts are reported (not blocked) unless you pass --no-conflict-check.",
-                 "Use --dry-run to preview the event before creating it."],
+        "tips": [
+            "Conflicts are reported (not blocked) unless you pass --no-conflict-check.",
+            "Use --dry-run to preview the event before creating it.",
+        ],
     },
     "mgs-files-upload": {
-        "examples": ["mgs files +upload ./report.pdf --to /Documents",
-                     "mgs files +upload ./big.zip --chunk-mb 10"],
+        "examples": [
+            "mgs files +upload ./report.pdf --to /Documents",
+            "mgs files +upload ./big.zip --chunk-mb 10",
+        ],
         "tips": ["Files over 4 MB upload via a chunked session automatically."],
     },
     "mgs-files-download": {
-        "examples": ["mgs files +download /Documents/report.pdf",
-                     "mgs files +download <ITEM_ID> --out ./local.pdf"],
+        "examples": [
+            "mgs files +download /Documents/report.pdf",
+            "mgs files +download <ITEM_ID> --out ./local.pdf",
+        ],
         "tips": ["Accepts a drive-item id or a /path."],
     },
     "mgs-teams-send": {
@@ -62,20 +77,28 @@ CURATED: dict[str, dict] = {
             "mgs teams +send --team <TEAM_ID> --channel <CHANNEL_ID> --message 'Deploy done'",
             "mgs teams +send --chat <CHAT_ID> --message 'hi' --html",
         ],
-        "tips": ["Discover ids with `mgs teams list`, `mgs teams +channels --team <id>`, `mgs teams +chats`."],
+        "tips": [
+            "Discover ids with `mgs teams list`, `mgs teams +channels --team <id>`, `mgs teams +chats`."
+        ],
     },
     "mgs-excel-read": {
-        "examples": ['mgs excel +read --file /Budget.xlsx --sheet Sheet1 --range "A1:C10"',
-                     "mgs excel +read --file <ITEM_ID> --sheet Sheet1"],
+        "examples": [
+            'mgs excel +read --file /Budget.xlsx --sheet Sheet1 --range "A1:C10"',
+            "mgs excel +read --file <ITEM_ID> --sheet Sheet1",
+        ],
         "tips": ["Omit --range to read the whole usedRange."],
     },
     "mgs-excel-append": {
-        "examples": ['mgs excel +append --file /Budget.xlsx --table Table1 --values "Alice,42,3.14"'],
+        "examples": [
+            'mgs excel +append --file /Budget.xlsx --table Table1 --values "Alice,42,3.14"'
+        ],
         "tips": ["Requires an existing table; numbers are coerced automatically."],
     },
     "mgs-onenote-write": {
-        "examples": ["mgs onenote +write --title 'Notes' --content 'Hello'",
-                     "mgs onenote +write --title 'Doc' --content '<p>HTML</p>' --html --section <SECTION_ID>"],
+        "examples": [
+            "mgs onenote +write --title 'Notes' --content 'Hello'",
+            "mgs onenote +write --title 'Doc' --content '<p>HTML</p>' --html --section <SECTION_ID>",
+        ],
         "tips": ["Plain --content is escaped and wrapped in <p>; use --html to pass a fragment."],
     },
 }
@@ -125,7 +148,9 @@ def _usage(alias: str, helper) -> str:
     for a in p._actions:
         if not a.option_strings:
             parts.append(f"<{a.dest.upper()}>")
-        elif a.required and not isinstance(a, (argparse._StoreTrueAction, argparse._StoreFalseAction)):
+        elif a.required and not isinstance(
+            a, (argparse._StoreTrueAction, argparse._StoreFalseAction)
+        ):
             parts.append(f"{a.option_strings[0]} <{a.dest.upper()}>")
     return " ".join(parts) + " [flags]"
 
@@ -135,25 +160,50 @@ def _helper_md(alias: str, helper) -> str:
     name = f"mgs-{alias}-{helper.name.lstrip('+')}"
     fm = _frontmatter(name, f"{product}: {helper.help}")
     rows = _flag_rows(helper)
-    table = "| Flag | Required | Default | Description |\n|------|----------|---------|-------------|\n"
+    table = (
+        "| Flag | Required | Default | Description |\n|------|----------|---------|-------------|\n"
+    )
     table += "\n".join(f"| {f} | {r} | {d} | {h} |" for f, r, d, h in rows)
     curated = CURATED.get(name, {})
     examples = curated.get("examples") or [_usage(alias, helper)]
     tips = curated.get("tips") or []
     cli_hint = f"Run `mgs {alias} {helper.name} --help` for the live flag list."
     out = [
-        fm, "", f"# {alias} {helper.name}", "", PREREQ, "", helper.help, "",
-        cli_hint, "",
-        "## Usage", "", "```bash", _usage(alias, helper), "```", "",
-        "## Flags", "", table, "",
-        "## Examples", "", "```bash", "\n".join(examples), "```", "",
+        fm,
+        "",
+        f"# {alias} {helper.name}",
+        "",
+        PREREQ,
+        "",
+        helper.help,
+        "",
+        cli_hint,
+        "",
+        "## Usage",
+        "",
+        "```bash",
+        _usage(alias, helper),
+        "```",
+        "",
+        "## Flags",
+        "",
+        table,
+        "",
+        "## Examples",
+        "",
+        "```bash",
+        "\n".join(examples),
+        "```",
+        "",
     ]
     if tips:
         out += ["## Tips", "", "\n".join(f"- {t}" for t in tips), ""]
     out += [
-        "## See Also", "",
+        "## See Also",
+        "",
         "- [mgs-shared](../mgs-shared/SKILL.md) — Global flags and auth",
-        f"- [mgs-{alias}](../mgs-{alias}/SKILL.md) — All {alias} commands", "",
+        f"- [mgs-{alias}](../mgs-{alias}/SKILL.md) — All {alias} commands",
+        "",
     ]
     return "\n".join(out)
 
@@ -169,10 +219,15 @@ def _service_md(svc) -> str:
             f"| [`{h.name}`](../mgs-{alias}-{h.name.lstrip('+')}/SKILL.md) | {h.help} |"
             for h in helpers
         )
-        out += ["## Helper Commands", "",
-                "| Command | Description |\n|---------|-------------|\n" + rows, ""]
+        out += [
+            "## Helper Commands",
+            "",
+            "| Command | Description |\n|---------|-------------|\n" + rows,
+            "",
+        ]
     out += [
-        "## Generic Verbs", "",
+        "## Generic Verbs",
+        "",
         "| Verb | Description |",
         "|------|-------------|",
         f"| `list` | List {svc.entity_type} items |",
@@ -182,14 +237,22 @@ def _service_md(svc) -> str:
         "| `delete <id>` | Delete |",
         f"| `<action> <id> --json '{{…}}'` | Bound action — see `mgs schema {alias}` |",
         "",
-        "## Discovering Commands", "", f"```bash\nmgs {alias} --help\nmgs schema {alias}\n```", "",
-        "## See Also", "", "- [mgs-shared](../mgs-shared/SKILL.md) — Global flags and auth", "",
+        "## Discovering Commands",
+        "",
+        f"```bash\nmgs {alias} --help\nmgs schema {alias}\n```",
+        "",
+        "## See Also",
+        "",
+        "- [mgs-shared](../mgs-shared/SKILL.md) — Global flags and auth",
+        "",
     ]
     return "\n".join(out)
 
 
 SHARED_MD = (
-    _frontmatter("mgs-shared", "mgs CLI: Shared patterns for authentication, global flags, and output.")
+    _frontmatter(
+        "mgs-shared", "mgs CLI: Shared patterns for authentication, global flags, and output."
+    )
     + """
 
 # mgs — Shared Reference
@@ -266,8 +329,12 @@ mgs schema <service>        # the service's properties, navigations, and bound a
 
 
 def _index_md(service_entries: list[tuple[str, str]], helper_entries: list[tuple[str, str]]) -> str:
-    out = ["# Skills Index", "",
-           "> Auto-generated by `mgs generate-skills`. Do not edit manually.", ""]
+    out = [
+        "# Skills Index",
+        "",
+        "> Auto-generated by `mgs generate-skills`. Do not edit manually.",
+        "",
+    ]
     out += ["## Services", "", "| Skill | Description |", "|-------|-------------|"]
     out += [f"| [{n}](../skills/{n}/SKILL.md) | {d} |" for n, d in service_entries]
     out += ["", "## Helpers", "", "| Skill | Description |", "|-------|-------------|"]
@@ -276,7 +343,9 @@ def _index_md(service_entries: list[tuple[str, str]], helper_entries: list[tuple
     return "\n".join(out)
 
 
-def _agents_md(service_entries: list[tuple[str, str]], helper_entries: list[tuple[str, str]]) -> str:
+def _agents_md(
+    service_entries: list[tuple[str, str]], helper_entries: list[tuple[str, str]]
+) -> str:
     """A single agent-agnostic guide (the AGENTS.md cross-tool convention)."""
     lines = [
         "# mgs — Microsoft 365 CLI for AI agents",
@@ -315,12 +384,12 @@ def _agents_md(service_entries: list[tuple[str, str]], helper_entries: list[tupl
         "",
     ]
     for sname, sdesc in service_entries:
-        alias = sname[len("mgs-"):]
+        alias = sname[len("mgs-") :]
         lines.append(f"### {alias} — {sdesc}")
         hs = [(n, d) for n, d in helper_entries if n.startswith(f"mgs-{alias}-")]
         if hs:
             for n, d in hs:
-                verb = "+" + n[len(f"mgs-{alias}-"):]
+                verb = "+" + n[len(f"mgs-{alias}-") :]
                 lines.append(f"- `mgs {alias} {verb}` — {d}")
         else:
             lines.append(f"- generic verbs only (`mgs {alias} list/get/create/update/delete`)")
@@ -428,8 +497,9 @@ def _target_dir(base_dir: str, target: str, global_: bool) -> str:
     return os.path.join(base_dir, PROJECT_TARGETS[target])
 
 
-def install(dir: str = ".", targets: list[str] | None = None,
-            global_: bool = False, prune: bool = False) -> dict:
+def install(
+    dir: str = ".", targets: list[str] | None = None, global_: bool = False, prune: bool = False
+) -> dict:
     """Sync the mgs-* SKILL.md tree into each target skill directory.
 
     Idempotent: rewrites changed skills, adds new ones, leaves unchanged ones, and

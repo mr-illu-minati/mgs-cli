@@ -1,8 +1,10 @@
 import argparse
 
 from mgs.executor import opts_from_namespace
-from mgs.helpers import mail  # noqa: F401  (registers helpers)
-from mgs.helpers import registry
+from mgs.helpers import (
+    mail,  # noqa: F401  (registers helpers)
+    registry,
+)
 from mgs.helpers.mail import delta_url, render_message, summarize_unread
 
 
@@ -24,7 +26,9 @@ def test_send_dry_run_builds_sendmail():
 
 
 def test_send_draft_dry_run_posts_messages():
-    out = _run("+send", ["--to", "a@x.com", "--subject", "Hi", "--body", "Yo", "--draft", "--dry-run"])
+    out = _run(
+        "+send", ["--to", "a@x.com", "--subject", "Hi", "--body", "Yo", "--draft", "--dry-run"]
+    )
     assert out["url"].endswith("/me/messages")
     assert out["body"]["subject"] == "Hi"
 
@@ -77,25 +81,43 @@ def test_forward_dry_run():
 
 def test_summarize_unread():
     msgs = [
-        {"from": {"emailAddress": {"name": "Al", "address": "al@x.com"}},
-         "subject": "Budget", "receivedDateTime": "2026-06-01T10:00:00Z", "hasAttachments": True},
-        {"from": {"emailAddress": {"address": "b@x.com"}},
-         "subject": "Lunch?", "receivedDateTime": "2026-06-01T09:00:00Z", "hasAttachments": False},
+        {
+            "from": {"emailAddress": {"name": "Al", "address": "al@x.com"}},
+            "subject": "Budget",
+            "receivedDateTime": "2026-06-01T10:00:00Z",
+            "hasAttachments": True,
+        },
+        {
+            "from": {"emailAddress": {"address": "b@x.com"}},
+            "subject": "Lunch?",
+            "receivedDateTime": "2026-06-01T09:00:00Z",
+            "hasAttachments": False,
+        },
     ]
     out = summarize_unread(msgs)
-    assert out[0] == {"from": "Al <al@x.com>", "subject": "Budget",
-                      "received": "2026-06-01T10:00:00Z", "hasAttachments": True}
+    assert out[0] == {
+        "from": "Al <al@x.com>",
+        "subject": "Budget",
+        "received": "2026-06-01T10:00:00Z",
+        "hasAttachments": True,
+    }
     assert out[1]["from"] == "b@x.com"
 
 
 def test_triage_dry_run_targets_unread_folder():
     out = _run("+triage", ["--folder", "inbox", "--max", "5", "--dry-run"])
-    assert out["url"].endswith("/me/mailFolders/inbox/messages?%24filter=isRead+eq+false&%24top=5"
-                               "&%24select=subject%2Cfrom%2CreceivedDateTime%2ChasAttachments"
-                               "&%24orderby=receivedDateTime+desc") or "isRead" in out["url"]
+    assert (
+        out["url"].endswith(
+            "/me/mailFolders/inbox/messages?%24filter=isRead+eq+false&%24top=5"
+            "&%24select=subject%2Cfrom%2CreceivedDateTime%2ChasAttachments"
+            "&%24orderby=receivedDateTime+desc"
+        )
+        or "isRead" in out["url"]
+    )
 
 
 def test_delta_url():
     assert delta_url("inbox", beta=False) == (
-        "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages/delta")
+        "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages/delta"
+    )
     assert delta_url("inbox", beta=True).startswith("https://graph.microsoft.com/beta/")
