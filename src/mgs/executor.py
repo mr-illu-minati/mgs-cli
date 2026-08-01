@@ -41,7 +41,9 @@ class RequestPlan:
 
 
 def opts_from_namespace(ns: argparse.Namespace) -> Opts:
-    g = lambda n, d=None: getattr(ns, n, d)
+    def g(n, d=None):
+        return getattr(ns, n, d)
+
     return Opts(
         select=g("select"),
         filter=g("filter"),
@@ -65,7 +67,7 @@ def _parse_json(value: str | None, what: str) -> dict | None:
     try:
         return jsonlib.loads(value)
     except ValueError as e:
-        raise UsageError(f"--{what} is not valid JSON: {e}")
+        raise UsageError(f"--{what} is not valid JSON: {e}") from e
 
 
 def _query(opts: Opts) -> str:

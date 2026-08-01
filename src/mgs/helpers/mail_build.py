@@ -28,7 +28,7 @@ def file_attachment(path: str) -> dict:
         with open(path, "rb") as f:
             data = f.read()
     except OSError as e:
-        raise UsageError(f"cannot read attachment {path!r}: {e}")
+        raise UsageError(f"cannot read attachment {path!r}: {e}") from e
     if len(data) > MAX_ATTACH_BYTES:
         raise UsageError(f"attachment {path!r} exceeds 25 MB")
     return {

@@ -33,7 +33,7 @@ class UploadHelper:
         try:
             size = os.path.getsize(ns.local)
         except OSError as e:
-            raise UsageError(f"cannot read {ns.local!r}: {e}")
+            raise UsageError(f"cannot read {ns.local!r}: {e}") from e
         remote = files_build.resolve_remote_path(ns.local, ns.to, ns.name)
         small = files_build.is_small(size)
 

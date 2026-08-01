@@ -44,3 +44,6 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+# `ruff format` owns line length for code; E501 would only flag long string
+# literals / comments (e.g. generated markdown in skills.py) that can't be reflowed.
+ignore = ["E501"]
