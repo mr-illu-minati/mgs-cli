@@ -99,9 +99,34 @@ workloads. Set `MGS_AUTH` to choose the track and, optionally, pin one mechanism
 | `workload` | Pin workload identity federation (OIDC) only. |
 | `managed-identity` (alias `msi`) | Pin the Azure host's managed identity only. |
 
-When `MGS_AUTH` is **unset**, `mgs` auto-selects `app-only` if it detects app-only credentials
-in the environment (a client secret, `AZURE_FEDERATED_TOKEN_FILE`, or a managed-identity
-endpoint); otherwise it uses the delegated flow. Explicit `MGS_AUTH` always wins.
+### Auto-detection when `MGS_AUTH` is unset
+
+When `MGS_AUTH` is **unset**, `mgs` auto-selects `app-only` only if it detects an actual
+unattended **credential** in the environment:
+
+- a client secret (`AZURE_CLIENT_SECRET` / `MGS_CLIENT_SECRET`), **or**
+- a federated token file (`AZURE_FEDERATED_TOKEN_FILE`), **or**
+- a managed-identity **endpoint** env var (`IDENTITY_ENDPOINT` or `MSI_ENDPOINT`).
+
+Otherwise it uses the delegated (browser) flow. Explicit `MGS_AUTH` always wins.
+
+> **A bare client id is not a credential.** Setting only `AZURE_CLIENT_ID` (or `MGS_CLIENT_ID`)
+> does **not** trigger app-only — it just says *which app* to use for the normal interactive
+> login. App-only engages only when one of the credentials above is present, or when you set
+> `MGS_AUTH` explicitly.
+
+**Plain Azure VMs need an explicit `MGS_AUTH=managed-identity`.** PaaS hosts (App Service,
+Functions, Container Apps, Arc, Service Fabric, Cloud Shell) inject `IDENTITY_ENDPOINT`, so
+`mgs` auto-detects them. A raw IaaS VM exposes its managed identity only through the IMDS
+endpoint (`169.254.169.254`) with **no env var**, so auto-detection can't see it — set
+`MGS_AUTH=managed-identity` there. (`mgs` deliberately never probes IMDS during detection: that
+would add a network call, and a hang off Azure, to the fast interactive path.)
+
+**`MGS_*` beats `AZURE_*` — avoid conflicting values.** For every pair below, if both are set to
+*different* values, the `MGS_*` one silently wins. In CI / Azure-hosted contexts (which inject
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_FEDERATED_TOKEN_FILE`), a leftover `MGS_CLIENT_ID`
+from an interactive setup will override the injected app id and break auth confusingly. Set only
+one per pair — prefer the standard `AZURE_*` names in unattended/CI environments.
 
 **App-only uses application permissions, not delegated scopes.** Grant the app the Graph
 **application** permissions it needs (e.g. `Mail.Read`, `User.Read.All`) and have an admin
