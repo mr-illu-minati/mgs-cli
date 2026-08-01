@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-from mgs import auth
+from mgs import auth, config
 from mgs.errors import UsageError
 
 
 def status_value(config_dir: str) -> dict:
+    mode = config.resolve_auth_mode()
     fast = auth._read_fast(config_dir)
     if fast and not auth.is_expired(fast["expires_at"]):
-        return {"authenticated": True, "expires_at": fast["expires_at"]}
-    return {"authenticated": False}
+        return {"authenticated": True, "mode": mode, "expires_at": fast["expires_at"]}
+    return {"authenticated": False, "mode": mode}
 
 
 def run(action: str, config_dir: str) -> dict:
