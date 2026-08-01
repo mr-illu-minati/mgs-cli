@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Rust build output (from the archived prototype branch feat/mgs-m1, if checked out)
+target/

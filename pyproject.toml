@@ -1,0 +1,39 @@
+[project]
+name = "mgs-cli"
+version = "0.7.1"
+description = "One CLI for Microsoft 365 — dynamic command surface from Microsoft Graph"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Benjamin Langlois" }]
+keywords = ["microsoft-365", "microsoft-graph", "cli", "outlook", "onedrive", "teams", "agents"]
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Utilities",
+]
+dependencies = ["msal>=1.28"]
+
+[project.urls]
+Homepage = "https://github.com/mr-illu-minati/mgs-cli"
+Repository = "https://github.com/mr-illu-minati/mgs-cli"
+Issues = "https://github.com/mr-illu-minati/mgs-cli/issues"
+
+[project.scripts]
+mgs = "mgs.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mgs"]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
