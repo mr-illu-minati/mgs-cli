@@ -11,6 +11,12 @@ def test_help_returns_zero(capsys):
     assert "+helper" in out                 # help mentions helper verbs
 
 
+def test_version_flag(capsys):
+    from mgs import __version__
+    assert main(["--version"]) == 0
+    assert capsys.readouterr().out.strip() == __version__
+
+
 def test_auth_status_logged_out(capsys, monkeypatch, tmp_path):
     monkeypatch.setenv("MGS_CONFIG_DIR", str(tmp_path))
     assert main(["auth", "status"]) == 0

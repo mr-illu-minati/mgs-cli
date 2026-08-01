@@ -36,6 +36,12 @@ def _run(argv: list[str]) -> int:
         _print_top_help()
         return 0
 
+    if first in ("--version", "-V", "version"):
+        from mgs import __version__
+
+        print(__version__)
+        return 0
+
     cfg = str(config.config_dir())
 
     if first == "auth":
