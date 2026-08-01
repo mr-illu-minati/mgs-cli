@@ -2,7 +2,7 @@
 name: mgs-shared
 description: "mgs CLI: Shared patterns for authentication, global flags, and output."
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # mgs — Shared Reference
@@ -70,5 +70,5 @@ mgs schema <service>        # the service's properties, navigations, and bound a
 
 ## Environment Variables
 
-`MGS_TOKEN`, `MGS_CLIENT_ID`/`MGS_TENANT_ID`, `MGS_CONFIG_DIR`, `MGS_NO_BROWSER`,
+`MGS_TOKEN`, `MGS_CLIENT_ID`/`MGS_TENANT_ID`, `MGS_SCOPES`, `MGS_CONFIG_DIR`, `MGS_NO_BROWSER`,
 `AZURE_CLIENT_ID`/`AZURE_TENANT_ID`.

@@ -2,7 +2,7 @@
 name: mgs-excel-read
 description: "Excel: Read an Excel worksheet range or usedRange"
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # excel +read

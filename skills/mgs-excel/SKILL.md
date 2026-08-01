@@ -2,7 +2,7 @@
 name: mgs-excel
 description: "Excel: Excel workbooks (helpers: +read/+append)."
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # excel

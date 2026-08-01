@@ -2,7 +2,7 @@
 name: mgs-calendar
 description: "Calendar: Manage Outlook calendar events."
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # calendar

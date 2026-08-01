@@ -1,6 +1,6 @@
 [project]
 name = "mgs-cli"
-version = "0.7.1"
+version = "0.7.2"
 description = "One CLI for Microsoft 365 — dynamic command surface from Microsoft Graph"
 readme = "README.md"
 requires-python = ">=3.10"

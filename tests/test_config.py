@@ -20,3 +20,13 @@ def test_mgs_client_id_overrides_builtin(monkeypatch):
 def test_config_dir_override(monkeypatch, tmp_path):
     monkeypatch.setenv("MGS_CONFIG_DIR", str(tmp_path / "x"))
     assert config_dir() == Path(tmp_path / "x")
+
+
+def test_resolve_scopes(monkeypatch):
+    from mgs.config import resolve_scopes
+    monkeypatch.delenv("MGS_SCOPES", raising=False)
+    assert resolve_scopes() is None
+    monkeypatch.setenv("MGS_SCOPES", "Mail.Read Mail.Send")
+    assert resolve_scopes() == ["Mail.Read", "Mail.Send"]
+    monkeypatch.setenv("MGS_SCOPES", "Mail.Read, Mail.Send")
+    assert resolve_scopes() == ["Mail.Read", "Mail.Send"]

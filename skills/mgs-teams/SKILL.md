@@ -2,7 +2,7 @@
 name: mgs-teams
 description: "Teams: Microsoft Teams: teams, channels, messages."
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # teams

@@ -122,6 +122,7 @@ token must be acquired or refreshed; a valid cached token skips it entirely.
 |---|---|
 | `MGS_TOKEN` | Pre-obtained Graph access token (highest priority) |
 | `MGS_CLIENT_ID` / `MGS_TENANT_ID` | Bring-your-own Entra app + tenant (default tenant: `common`) |
+| `MGS_SCOPES` | Delegated Graph scopes to request at login (space/comma-separated; default: all). Handy with a minimal BYO app. |
 | `MGS_CONFIG_DIR` | Config dir override (default `~/.config/mgs`) |
 | `MGS_NO_BROWSER` | Use device-code login instead of the browser (headless/CI) |
 | `AZURE_CLIENT_ID` / `AZURE_TENANT_ID` | Standard fallbacks |

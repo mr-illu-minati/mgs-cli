@@ -2,7 +2,7 @@
 name: mgs-onenote-write
 description: "OneNote: Create a OneNote page (--title, --content, [--html], [--section])"
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # onenote +write

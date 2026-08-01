@@ -65,6 +65,17 @@ export MGS_TENANT_ID=<your-tenant-id-or-domain>   # optional; default: common
 **public client** with `http://localhost` as a redirect URI, enable "Allow public client
 flows", and add the delegated Graph permissions listed above.
 
+**Minimal-scope apps.** `mgs` requests all of the scopes above at login by default, so a
+narrowly-scoped app (e.g. mail-only) can hit an admin-consent prompt for scopes it does not
+have. Set `MGS_SCOPES` to request only what your app supports:
+
+```bash
+export MGS_SCOPES="User.Read Mail.ReadWrite Mail.Send"
+mgs auth logout && mgs auth login
+```
+
+Commands that need a scope you did not request return a clear permission error.
+
 ## Tenant selection
 
 `MGS_TENANT_ID` chooses the authority: `common` (default — any work/school or personal

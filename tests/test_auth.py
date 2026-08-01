@@ -30,3 +30,11 @@ def test_scopes_include_teams_and_notes():
     for s in ("Team.ReadBasic.All", "Channel.ReadBasic.All", "ChannelMessage.Send",
               "Chat.ReadWrite", "Notes.ReadWrite"):
         assert s in SCOPES
+
+
+def test_effective_scopes_default_and_override(monkeypatch):
+    from mgs import auth
+    monkeypatch.delenv("MGS_SCOPES", raising=False)
+    assert auth._effective_scopes() == auth.SCOPES
+    monkeypatch.setenv("MGS_SCOPES", "Mail.ReadWrite Mail.Send")
+    assert auth._effective_scopes() == ["Mail.ReadWrite", "Mail.Send"]

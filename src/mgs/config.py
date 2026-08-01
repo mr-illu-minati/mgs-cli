@@ -25,6 +25,14 @@ def resolve_tenant() -> str:
     return _env("MGS_TENANT_ID") or _env("AZURE_TENANT_ID") or "common"
 
 
+def resolve_scopes() -> list[str] | None:
+    """Delegated Graph scopes from MGS_SCOPES (space/comma-separated), or None for defaults."""
+    raw = _env("MGS_SCOPES")
+    if not raw:
+        return None
+    return [s for s in raw.replace(",", " ").split() if s]
+
+
 def config_dir() -> Path:
     override = _env("MGS_CONFIG_DIR")
     if override:

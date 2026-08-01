@@ -2,7 +2,7 @@
 name: mgs-calendar-agenda
 description: "Calendar: Show upcoming events (calendarView; expands recurrences)"
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # calendar +agenda

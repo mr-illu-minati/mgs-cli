@@ -2,7 +2,7 @@
 name: mgs-mail-send
 description: "Mail: Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--draft])"
 metadata:
-  version: 0.7.1
+  version: 0.7.2
 ---
 
 # mail +send

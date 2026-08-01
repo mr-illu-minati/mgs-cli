@@ -27,6 +27,11 @@ def is_expired(expires_at: int) -> bool:
     return _now() + SKEW_SECS >= expires_at
 
 
+def _effective_scopes() -> list[str]:
+    """Scopes to request: the MGS_SCOPES override if set, else the full default set."""
+    return config.resolve_scopes() or SCOPES
+
+
 def _token_path(config_dir: str) -> Path:
     return Path(config_dir) / "token.json"
 
@@ -70,19 +75,20 @@ def _acquire_via_msal(config_dir: str, force_interactive: bool) -> str:
         token_cache=cache,
     )
 
+    scopes = _effective_scopes()
     result = None
     if not force_interactive:
         accounts = app.get_accounts()
         if accounts:
-            result = app.acquire_token_silent(SCOPES, account=accounts[0])
+            result = app.acquire_token_silent(scopes, account=accounts[0])
 
     if not result:
         if os.environ.get("MGS_NO_BROWSER"):
-            flow = app.initiate_device_flow(scopes=SCOPES)
+            flow = app.initiate_device_flow(scopes=scopes)
             print(flow.get("message", "Complete device-code sign-in."), file=sys.stderr)
             result = app.acquire_token_by_device_flow(flow)
         else:
-            result = app.acquire_token_interactive(scopes=SCOPES)
+            result = app.acquire_token_interactive(scopes=scopes)
 
     if not result or "access_token" not in result:
         detail = (result or {}).get("error_description", "interactive login failed")
