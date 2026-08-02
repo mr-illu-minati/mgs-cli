@@ -2,7 +2,7 @@
 name: mgs-teams-send
 description: "Teams: Send a Teams message to a channel (--team/--channel) or chat (--chat)"
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # teams +send

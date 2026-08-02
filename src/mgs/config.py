@@ -77,6 +77,27 @@ def resolve_auth_mode() -> str:
     return mode
 
 
+# Mailbox targeted by /me/-style paths, set from the --mailbox CLI flag.
+_mailbox_override: str | None = None
+
+
+def set_mailbox(value: str | None) -> None:
+    global _mailbox_override
+    _mailbox_override = value
+
+
+def resolve_mailbox() -> str | None:
+    """Target mailbox UPN: --mailbox flag > MGS_MAILBOX > MGS_DEFAULT_MAILBOX (app-only only)."""
+    if _mailbox_override:
+        return _mailbox_override
+    env = _env("MGS_MAILBOX")
+    if env:
+        return env
+    if resolve_auth_mode() != "delegated":
+        return _env("MGS_DEFAULT_MAILBOX")
+    return None
+
+
 def config_dir() -> Path:
     override = _env("MGS_CONFIG_DIR")
     if override:

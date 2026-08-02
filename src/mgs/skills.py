@@ -290,6 +290,7 @@ generic `list`/`get`/`create`/`update`/`delete`, any bound action, or a `+helper
 | `--page-all` | Follow `@odata.nextLink` and return all pages |
 | `--json '{…}'` | Request body (for `create`/`update`/bound actions) |
 | `--params '{…}'` | Extra OData query parameters as a JSON object |
+| `--mailbox <upn>` | Target another user's mailbox/drive/calendar (`/users/<upn>/` instead of `/me/`); required in app-only auth (or set `MGS_DEFAULT_MAILBOX`) |
 | `--select`, `--filter`, `--orderby`, `--expand`, `--search`, `--top`, `--skip` | OData query options on `list` |
 
 ## Output
@@ -398,6 +399,7 @@ def _agents_md(
         "## Global flags",
         "",
         "`--dry-run` · `--beta` · `--page-all` · `--json '{…}'` · `--params '{…}'` ·",
+        "`--mailbox <upn>` (target another user's mailbox/drive/calendar; required in app-only auth) ·",
         "OData `--select` / `--filter` / `--orderby` / `--expand` / `--search` / `--top` / `--skip`.",
         "",
         "## Safety rules for agents",

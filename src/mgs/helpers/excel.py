@@ -6,6 +6,7 @@ import argparse
 
 from mgs.executor import Opts
 from mgs.helpers import excel_build, registry
+from mgs.userpath import resolve_user_path
 
 
 def _base(beta: bool) -> str:
@@ -25,7 +26,7 @@ class ReadHelper:
         p.add_argument("--beta", action="store_true")
 
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
-        path = excel_build.read_range_path(ns.file, ns.sheet, ns.range)
+        path = resolve_user_path(excel_build.read_range_path(ns.file, ns.sheet, ns.range))
         if opts.dry_run:
             return {"dryRun": True, "method": "GET", "url": _base(opts.beta) + path}
         from mgs.client import GraphClient
@@ -50,7 +51,7 @@ class AppendHelper:
         p.add_argument("--beta", action="store_true")
 
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
-        path = excel_build.append_path(ns.file, ns.table)
+        path = resolve_user_path(excel_build.append_path(ns.file, ns.table))
         body = {"values": excel_build.coerce_values(ns.values)}
         if opts.dry_run:
             return {"dryRun": True, "method": "POST", "url": _base(opts.beta) + path, "body": body}

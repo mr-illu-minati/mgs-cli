@@ -54,3 +54,17 @@ def test_download_dry_run_by_id_with_out():
     out = _run("+download", ["01ABC", "--out", "/tmp/x.bin", "--dry-run"])
     assert "/me/drive/items/01ABC" in out["url"]
     assert out["out"] == "/tmp/x.bin"
+
+
+def test_upload_small_dry_run_with_mailbox(tmp_path, monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    f = tmp_path / "small.txt"
+    f.write_bytes(b"hello")
+    out = _run("+upload", [str(f), "--to", "/Docs", "--dry-run"])
+    assert "/users/box%40contoso.com/drive/root:/Docs/small.txt:" in out["url"]
+
+
+def test_download_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run("+download", ["/Reports/Q3.xlsx", "--dry-run"])
+    assert "/users/box%40contoso.com/drive/root:/Reports/Q3.xlsx:" in out["url"]

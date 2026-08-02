@@ -128,6 +128,13 @@ would add a network call, and a hang off Azure, to the fast interactive path.)
 from an interactive setup will override the injected app id and break auth confusingly. Set only
 one per pair — prefer the standard `AZURE_*` names in unattended/CI environments.
 
+**App-only has no `/me/` context — pick a target mailbox.** Commands like `mgs mail list`
+normally hit `/me/…`, which only exists for a signed-in user. In app-only mode, pass the global
+`--mailbox <upn>` flag (or set `MGS_DEFAULT_MAILBOX` as a fallback) and mgs rewrites the request
+to `/users/<upn>/…`. Without either, `/me/`-style commands fail fast with a usage error. To
+limit which mailboxes the app can touch, scope it with an Exchange
+[Application Access Policy](https://learn.microsoft.com/en-us/graph/auth-limit-mailbox-access).
+
 **App-only uses application permissions, not delegated scopes.** Grant the app the Graph
 **application** permissions it needs (e.g. `Mail.Read`, `User.Read.All`) and have an admin
 consent to them once in Entra ID. `MGS_SCOPES` applies only to the delegated flow and is

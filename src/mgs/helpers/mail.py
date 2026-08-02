@@ -6,6 +6,7 @@ import argparse
 
 from mgs.executor import Opts
 from mgs.helpers import mail_build, registry
+from mgs.userpath import resolve_user_path
 
 
 def _addr(recipient: dict) -> str:
@@ -34,6 +35,7 @@ def render_message(msg: dict) -> dict:
 
 
 def _dry_or_send(method: str, path: str, body: dict | None, opts: Opts, token: str) -> object:
+    path = resolve_user_path(path)
     if opts.dry_run:
         version = "beta" if opts.beta else "v1.0"
         out = {
@@ -98,7 +100,7 @@ class ReadHelper:
         from mgs.validate import encode_path_segment, validate_resource_name
 
         validate_resource_name(ns.id)
-        path = f"/me/messages/{encode_path_segment(ns.id)}"
+        path = resolve_user_path(f"/me/messages/{encode_path_segment(ns.id)}")
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
             return {
@@ -191,7 +193,8 @@ def delta_url(folder: str, *, beta: bool) -> str:
     from mgs.validate import encode_path_segment
 
     base = "https://graph.microsoft.com/beta" if beta else "https://graph.microsoft.com/v1.0"
-    return f"{base}/me/mailFolders/{encode_path_segment(folder)}/messages/delta"
+    path = resolve_user_path(f"/me/mailFolders/{encode_path_segment(folder)}/messages/delta")
+    return f"{base}{path}"
 
 
 class TriageHelper:
@@ -216,7 +219,7 @@ class TriageHelper:
             select="subject,from,receivedDateTime,hasAttachments",
             orderby="receivedDateTime desc",
         ).to_query_string()
-        path = f"/me/mailFolders/{folder}/messages{query}"
+        path = resolve_user_path(f"/me/mailFolders/{folder}/messages{query}")
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
             return {

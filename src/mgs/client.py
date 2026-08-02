@@ -26,7 +26,9 @@ class GraphClient:
         self.base = BETA_BASE if beta else V1_BASE
 
     def full_url(self, path: str, query: str = "") -> str:
-        return f"{self.base}{path}{query}"
+        from mgs.userpath import resolve_user_path
+
+        return f"{self.base}{resolve_user_path(path)}{query}"
 
     def request(
         self, method: str, url: str, body: dict | None = None, headers: dict | None = None

@@ -9,6 +9,7 @@ from zoneinfo import ZoneInfo
 
 from mgs.executor import Opts
 from mgs.helpers import dt, registry
+from mgs.userpath import resolve_user_path
 
 _AGENDA_SELECT = "subject,start,end,location,organizer,attendees,isAllDay,isOnlineMeeting"
 
@@ -67,7 +68,7 @@ class AgendaHelper:
         start = dt.parse_dt(ns.start) if ns.start else _now_naive(tz)
         days = 7 if ns.week else ns.days
         s, e = dt.day_window(start, days)
-        path = _calendarview_path(s, e, ns.max)
+        path = resolve_user_path(_calendarview_path(s, e, ns.max))
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
             return {
@@ -161,12 +162,13 @@ class InsertHelper:
             all_day=ns.all_day,
             online=ns.online,
         )
+        events_path = resolve_user_path("/me/events")
         if opts.dry_run:
             version = "beta" if opts.beta else "v1.0"
             return {
                 "dryRun": True,
                 "method": "POST",
-                "url": f"https://graph.microsoft.com/{version}/me/events",
+                "url": f"https://graph.microsoft.com/{version}{events_path}",
                 "body": event,
             }
 
@@ -183,7 +185,7 @@ class InsertHelper:
             )
             value = resp.get("value", []) if isinstance(resp, dict) else []
             conflicts = dt.find_conflicts(s_dt, e_dt, value)
-        created = client.request("POST", client.full_url("/me/events"), body=event)
+        created = client.request("POST", client.full_url(events_path), body=event)
         result = {
             "created": created.get("id") if isinstance(created, dict) else None,
             "event": render_event(created if isinstance(created, dict) else event),

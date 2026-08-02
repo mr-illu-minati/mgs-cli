@@ -37,3 +37,11 @@ def test_append_dry_run():
 def test_registered():
     assert registry.get("workbook", "+read") is not None
     assert registry.get("workbook", "+append") is not None
+
+
+def test_read_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run("+read", ["--file", "/Book.xlsx", "--sheet", "Sheet1", "--dry-run"])
+    assert "/users/box%40contoso.com/drive/root%3A/Book.xlsx%3A" in out["url"] or (
+        "/users/box%40contoso.com/drive/root:/Book.xlsx:" in out["url"]
+    )

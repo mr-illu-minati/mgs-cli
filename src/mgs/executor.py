@@ -124,11 +124,13 @@ def build_plan(svc: ServiceEntry, verb: str, id: str | None, opts: Opts) -> Requ
 
 def execute(plan: RequestPlan, opts: Opts, token: str) -> object:
     if opts.dry_run:
+        from mgs.userpath import resolve_user_path
+
         version = "beta" if opts.beta else "v1.0"
         out: dict = {
             "dryRun": True,
             "method": plan.method,
-            "url": f"https://graph.microsoft.com/{version}{plan.path}{plan.query}",
+            "url": f"https://graph.microsoft.com/{version}{resolve_user_path(plan.path)}{plan.query}",
         }
         if plan.body is not None:
             out["body"] = plan.body

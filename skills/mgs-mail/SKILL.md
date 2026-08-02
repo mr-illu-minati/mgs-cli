@@ -2,7 +2,7 @@
 name: mgs-mail
 description: "Mail: Read, send, and manage Outlook mail."
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # mail

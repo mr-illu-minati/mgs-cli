@@ -6,6 +6,7 @@ import argparse
 
 from mgs.executor import Opts
 from mgs.helpers import onenote_build, registry
+from mgs.userpath import resolve_user_path
 
 
 def _base(beta: bool) -> str:
@@ -26,7 +27,7 @@ class WriteHelper:
         p.add_argument("--beta", action="store_true")
 
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
-        path = onenote_build.pages_path(ns.section)
+        path = resolve_user_path(onenote_build.pages_path(ns.section))
         page = onenote_build.build_page_html(ns.title, ns.content, ns.html)
         url = _base(opts.beta) + path
         if opts.dry_run:

@@ -2,7 +2,7 @@
 name: mgs-mail-reply
 description: "Mail: Reply to a message (threading handled by Graph)"
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # mail +reply

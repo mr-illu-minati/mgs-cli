@@ -2,7 +2,7 @@
 name: mgs-teams-chats
 description: "Teams: List your recent chats (for discovering chat ids)"
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # teams +chats

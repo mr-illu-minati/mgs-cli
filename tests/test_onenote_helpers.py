@@ -27,3 +27,9 @@ def test_write_dry_run_section():
 
 def test_registered():
     assert registry.get("onenotePage", "+write") is not None
+
+
+def test_write_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run("+write", ["--title", "N", "--content", "x", "--dry-run"])
+    assert out["url"].endswith("/users/box%40contoso.com/onenote/pages")

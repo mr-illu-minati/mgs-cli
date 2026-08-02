@@ -114,3 +114,27 @@ def test_insert_dry_run_shows_event_no_conflict_call():
     assert out["method"] == "POST"
     assert out["url"].endswith("/me/events")
     assert out["body"]["subject"] == "Sync"
+
+
+def test_agenda_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run("+agenda", ["--start", "2026-07-01", "--dry-run"])
+    assert "/users/box%40contoso.com/calendarView" in out["url"]
+
+
+def test_insert_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run(
+        "+insert",
+        [
+            "--subject",
+            "S",
+            "--start",
+            "2026-07-01T14:00",
+            "--duration",
+            "30",
+            "--no-conflict-check",
+            "--dry-run",
+        ],
+    )
+    assert out["url"].endswith("/users/box%40contoso.com/events")

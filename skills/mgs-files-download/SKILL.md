@@ -2,7 +2,7 @@
 name: mgs-files-download
 description: "Files: Download a drive item (by id or /path) to a local file"
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # files +download

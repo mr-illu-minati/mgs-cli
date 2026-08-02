@@ -121,3 +121,22 @@ def test_delta_url():
         "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages/delta"
     )
     assert delta_url("inbox", beta=True).startswith("https://graph.microsoft.com/beta/")
+
+
+def test_send_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run("+send", ["--to", "a@x.com", "--subject", "Hi", "--body", "Yo", "--dry-run"])
+    assert out["url"].endswith("/users/box%40contoso.com/sendMail")
+
+
+def test_triage_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run("+triage", ["--folder", "inbox", "--dry-run"])
+    assert "/users/box%40contoso.com/mailFolders/inbox/messages" in out["url"]
+
+
+def test_delta_url_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    assert delta_url("inbox", beta=False) == (
+        "https://graph.microsoft.com/v1.0/users/box%40contoso.com/mailFolders/inbox/messages/delta"
+    )
