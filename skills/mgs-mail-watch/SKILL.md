@@ -2,7 +2,7 @@
 name: mgs-mail-watch
 description: "Mail: Stream new mail as NDJSON via Graph delta polling"
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # mail +watch

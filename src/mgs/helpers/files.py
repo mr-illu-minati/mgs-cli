@@ -8,6 +8,7 @@ import os
 from mgs.errors import UsageError
 from mgs.executor import Opts
 from mgs.helpers import files_build, registry
+from mgs.userpath import resolve_user_path
 
 _GRAPH = {"v1.0": "https://graph.microsoft.com/v1.0", "beta": "https://graph.microsoft.com/beta"}
 
@@ -43,7 +44,8 @@ class UploadHelper:
                     "dryRun": True,
                     "mode": "small",
                     "method": "PUT",
-                    "url": _base(opts.beta) + files_build.upload_content_path(remote),
+                    "url": _base(opts.beta)
+                    + resolve_user_path(files_build.upload_content_path(remote)),
                     "size": size,
                 }
             chunk = files_build.normalize_chunk_size(ns.chunk_mb)
@@ -51,7 +53,8 @@ class UploadHelper:
                 "dryRun": True,
                 "mode": "session",
                 "method": "POST",
-                "url": _base(opts.beta) + files_build.upload_session_path(remote),
+                "url": _base(opts.beta)
+                + resolve_user_path(files_build.upload_session_path(remote)),
                 "size": size,
                 "chunks": len(files_build.compute_chunks(size, chunk)),
             }
@@ -62,7 +65,7 @@ class UploadHelper:
             data = f.read()
 
         if small:
-            url = _base(opts.beta) + files_build.upload_content_path(remote)
+            url = _base(opts.beta) + resolve_user_path(files_build.upload_content_path(remote))
             headers = {
                 "Authorization": f"Bearer {token}",
                 "Content-Type": "application/octet-stream",
@@ -113,7 +116,7 @@ class DownloadHelper:
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
         from mgs.drivepath import drive_item_base
 
-        base = drive_item_base(ns.ref)
+        base = resolve_user_path(drive_item_base(ns.ref))
         resolve_url = _base(opts.beta) + base
         if opts.dry_run:
             return {

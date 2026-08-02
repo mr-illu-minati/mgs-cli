@@ -27,11 +27,36 @@ def _print_top_help() -> None:
         print(f"  {s.aliases[0]:<10} {s.description}")
     print("\nRun `mgs <service> --help` to see that service's verbs and +helpers.")
     print(
-        "Global flags: --dry-run  --beta  --page-all  --json  --params  --select/--filter/--top ..."
+        "Global flags: --dry-run  --beta  --page-all  --json  --params  "
+        "--mailbox <upn>  --select/--filter/--top ..."
     )
 
 
+def _extract_mailbox(argv: list[str]) -> tuple[list[str], str | None]:
+    """Pull the global --mailbox flag out of argv before per-service parsing."""
+    out: list[str] = []
+    mailbox: str | None = None
+    i = 0
+    while i < len(argv):
+        tok = argv[i]
+        if tok == "--mailbox":
+            if i + 1 >= len(argv) or argv[i + 1].startswith("-"):
+                raise UsageError("--mailbox requires a value (user principal name)")
+            mailbox = argv[i + 1]
+            i += 2
+            continue
+        if tok.startswith("--mailbox="):
+            mailbox = tok[len("--mailbox=") :]
+            i += 1
+            continue
+        out.append(tok)
+        i += 1
+    return out, mailbox
+
+
 def _run(argv: list[str]) -> int:
+    argv, mailbox = _extract_mailbox(argv)
+    config.set_mailbox(mailbox)
     first = argv[0] if argv else ""
 
     if first in ("", "-h", "--help"):

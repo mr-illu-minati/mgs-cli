@@ -67,6 +67,7 @@ mgs schema <service>       # properties, navigations, bound actions
 ## Global flags
 
 `--dry-run` · `--beta` · `--page-all` · `--json '{…}'` · `--params '{…}'` ·
+`--mailbox <upn>` (target another user's mailbox/drive/calendar; required in app-only auth) ·
 OData `--select` / `--filter` / `--orderby` / `--expand` / `--search` / `--top` / `--skip`.
 
 ## Safety rules for agents

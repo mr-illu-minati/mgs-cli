@@ -7,6 +7,7 @@ import argparse
 from mgs.errors import UsageError
 from mgs.executor import Opts
 from mgs.helpers import registry
+from mgs.userpath import resolve_user_path
 from mgs.validate import encode_path_segment, validate_resource_name
 
 
@@ -90,7 +91,7 @@ class ChatsHelper:
         p.add_argument("--beta", action="store_true")
 
     def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
-        path = f"/me/chats?%24top={ns.max}"
+        path = resolve_user_path(f"/me/chats?%24top={ns.max}")
         if opts.dry_run:
             return {"dryRun": True, "method": "GET", "url": _base(opts.beta) + path}
         from mgs.client import GraphClient

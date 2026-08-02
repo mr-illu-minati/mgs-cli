@@ -2,7 +2,7 @@
 name: mgs-files
 description: "Files: Browse and manage OneDrive/SharePoint files."
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # files

@@ -47,3 +47,9 @@ def test_registered():
     assert registry.get("team", "+send") is not None
     assert registry.get("team", "+channels") is not None
     assert registry.get("team", "+chats") is not None
+
+
+def test_chats_dry_run_with_mailbox(monkeypatch):
+    monkeypatch.setenv("MGS_MAILBOX", "box@contoso.com")
+    out = _run("+chats", ["--dry-run"])
+    assert "/users/box%40contoso.com/chats" in out["url"]

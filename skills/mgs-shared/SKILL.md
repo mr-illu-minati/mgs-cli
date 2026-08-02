@@ -2,7 +2,7 @@
 name: mgs-shared
 description: "mgs CLI: Shared patterns for authentication, global flags, and output."
 metadata:
-  version: 0.7.2
+  version: 0.8.1
 ---
 
 # mgs — Shared Reference
@@ -40,6 +40,7 @@ generic `list`/`get`/`create`/`update`/`delete`, any bound action, or a `+helper
 | `--page-all` | Follow `@odata.nextLink` and return all pages |
 | `--json '{…}'` | Request body (for `create`/`update`/bound actions) |
 | `--params '{…}'` | Extra OData query parameters as a JSON object |
+| `--mailbox <upn>` | Target another user's mailbox/drive/calendar (`/users/<upn>/` instead of `/me/`); required in app-only auth (or set `MGS_DEFAULT_MAILBOX`) |
 | `--select`, `--filter`, `--orderby`, `--expand`, `--search`, `--top`, `--skip` | OData query options on `list` |
 
 ## Output

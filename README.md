@@ -67,6 +67,20 @@ Every service also accepts **bound actions** (e.g. `mgs mail move <id> --json '{
 raw bodies via `--json` / `--params`. Discover anything with `mgs <service> --help` and
 `mgs schema <service>`.
 
+### Target mailbox (`--mailbox`)
+
+By default commands run against the signed-in user (`/me/`). The global `--mailbox <upn>` flag
+retargets any command to another user's mailbox/drive/calendar (`/users/<upn>/`):
+
+```bash
+mgs mail +triage --mailbox assistant@contoso.com          # delegated: shared-mailbox access
+MGS_AUTH=secret mgs mail list --mailbox user@contoso.com  # app-only: required (no /me/ context)
+```
+
+In **app-only** mode `/me/` has no meaning, so a mailbox is required: pass `--mailbox`, or set
+`MGS_DEFAULT_MAILBOX` as a fallback. Without either, mgs fails fast with a usage error instead
+of sending a doomed Graph call. `MGS_MAILBOX` is the env twin of the flag (flag wins).
+
 ## Using mgs with AI agents (any platform)
 
 `mgs` ships a generated, **agent-agnostic** skill set — no platform lock-in.
@@ -128,6 +142,8 @@ token must be acquired or refreshed; a valid cached token skips it entirely.
 | `MGS_CONFIG_DIR` | Config dir override (default `~/.config/mgs`) |
 | `MGS_NO_BROWSER` | Use device-code login instead of the browser (headless/CI) |
 | `MGS_AUTH` | Auth mode: `delegated` (default), `app-only`, `secret`, `workload`, `managed-identity` — for unattended/server/CI use ([details](docs/auth-production.md)) |
+| `MGS_MAILBOX` | Target mailbox UPN for `/me/`-style commands (env twin of the global `--mailbox` flag) |
+| `MGS_DEFAULT_MAILBOX` | Fallback mailbox in app-only mode when `--mailbox`/`MGS_MAILBOX` is not given |
 | `AZURE_CLIENT_SECRET` / `MGS_CLIENT_SECRET` | App-only client secret (service principal) |
 | `AZURE_CLIENT_CERTIFICATE_PATH` | App-only certificate (PEM) |
 | `AZURE_FEDERATED_TOKEN_FILE` | App-only workload identity federation (OIDC) token file |
