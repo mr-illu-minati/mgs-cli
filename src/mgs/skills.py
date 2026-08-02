@@ -27,10 +27,13 @@ CURATED: dict[str, dict] = {
             "mgs mail +send --to a@x.com --cc b@x.com --subject Report --body 'See attached' --attach report.pdf",
             "mgs mail +send --to a@x.com --subject 'Bold' --body '<b>hi</b>' --html",
             "mgs mail +send --to a@x.com --subject Draft --body 'wip' --draft",
+            "mgs mail +send --to a@x.com --subject Hi --body Yo --from alias@example.com --header 'X-Run-Id: 42'",
         ],
         "tips": [
             "Total attachments must stay under 25 MB.",
             "Use --draft to save to Drafts instead of sending.",
+            "--from sends as a mailbox alias (needs SendFromAliasEnabled) or another mailbox (needs Send As rights).",
+            "--header adds a custom internet header; Graph requires the X- name prefix.",
         ],
     },
     "mgs-mail-read": {

@@ -55,7 +55,10 @@ def _dry_or_send(method: str, path: str, body: dict | None, opts: Opts, token: s
 class SendHelper:
     name = "+send"
     service = "message"
-    help = "Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--draft])"
+    help = (
+        "Send an email (--to/--cc/--bcc --subject --body "
+        "[--html] [--attach] [--from] [--header] [--draft])"
+    )
 
     def add_arguments(self, p: argparse.ArgumentParser) -> None:
         p.add_argument("--to", help="Recipient(s), comma-separated")
@@ -65,6 +68,17 @@ class SendHelper:
         p.add_argument("--body", default="", help="Email body")
         p.add_argument("--html", action="store_true", help="Treat body as HTML")
         p.add_argument("--attach", action="append", help="File to attach (repeatable)")
+        p.add_argument(
+            "--from",
+            dest="from_addr",
+            help="Send-as address (e.g. a mailbox alias; requires SendFromAliasEnabled "
+            "for aliases, or Send As rights for another mailbox)",
+        )
+        p.add_argument(
+            "--header",
+            action="append",
+            help="Custom header 'X-Name: value' (repeatable; Graph requires the X- prefix)",
+        )
         p.add_argument("--draft", action="store_true", help="Save as draft instead of sending")
         p.add_argument("--dry-run", action="store_true")
         p.add_argument("--beta", action="store_true")
@@ -78,6 +92,8 @@ class SendHelper:
             cc=ns.cc,
             bcc=ns.bcc,
             attach=ns.attach,
+            from_addr=ns.from_addr,
+            headers=ns.header,
         )
         if ns.draft:
             return _dry_or_send("POST", "/me/messages", message, opts, token)

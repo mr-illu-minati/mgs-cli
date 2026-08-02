@@ -2,7 +2,7 @@
 name: mgs-files-upload
 description: "Files: Upload a file (auto small PUT or chunked upload session for >4 MB)"
 metadata:
-  version: 0.8.1
+  version: 0.8.2
 ---
 
 # files +upload

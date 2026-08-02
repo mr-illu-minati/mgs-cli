@@ -56,3 +56,68 @@ def test_build_message_requires_recipients():
 def test_html_to_text():
     assert html_to_text("<p>Hi <b>there</b></p><br>x") == "Hi there\nx"
     assert html_to_text("a &amp; b") == "a & b"
+
+
+def test_build_message_with_from():
+    m = build_message(
+        "Hi",
+        "Body",
+        html=False,
+        to="a@x.com",
+        cc=None,
+        bcc=None,
+        attach=None,
+        from_addr="alias@x.com",
+    )
+    assert m["from"] == {"emailAddress": {"address": "alias@x.com"}}
+
+
+def test_build_message_without_from_has_no_from_key():
+    m = build_message("Hi", "Body", html=False, to="a@x.com", cc=None, bcc=None, attach=None)
+    assert "from" not in m
+
+
+def test_build_message_with_headers():
+    m = build_message(
+        "Hi",
+        "Body",
+        html=False,
+        to="a@x.com",
+        cc=None,
+        bcc=None,
+        attach=None,
+        headers=["X-Sandbox-Persona: employeur", "x-run-id:42"],
+    )
+    assert m["internetMessageHeaders"] == [
+        {"name": "X-Sandbox-Persona", "value": "employeur"},
+        {"name": "x-run-id", "value": "42"},
+    ]
+
+
+def test_build_message_header_must_be_name_colon_value():
+    with pytest.raises(UsageError, match="NAME: VALUE"):
+        build_message(
+            "Hi",
+            "B",
+            html=False,
+            to="a@x.com",
+            cc=None,
+            bcc=None,
+            attach=None,
+            headers=["pas-de-deux-points"],
+        )
+
+
+def test_build_message_header_must_start_with_x():
+    # Graph rejects custom internetMessageHeaders that don't start with x- ; fail fast locally.
+    with pytest.raises(UsageError, match="[Xx]-"):
+        build_message(
+            "Hi",
+            "B",
+            html=False,
+            to="a@x.com",
+            cc=None,
+            bcc=None,
+            attach=None,
+            headers=["Reply-To: b@y.com"],
+        )

@@ -2,7 +2,7 @@
 name: mgs-mail
 description: "Mail: Read, send, and manage Outlook mail."
 metadata:
-  version: 0.8.1
+  version: 0.8.2
 ---
 
 # mail
@@ -17,7 +17,7 @@ mgs mail <verb> [flags]
 
 | Command | Description |
 |---------|-------------|
-| [`+send`](../mgs-mail-send/SKILL.md) | Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--draft]) |
+| [`+send`](../mgs-mail-send/SKILL.md) | Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--from] [--header] [--draft]) |
 | [`+read`](../mgs-mail-read/SKILL.md) | Read a message and render clean body/headers |
 | [`+reply`](../mgs-mail-reply/SKILL.md) | Reply to a message (threading handled by Graph) |
 | [`+reply-all`](../mgs-mail-reply-all/SKILL.md) | Reply-all to a message |

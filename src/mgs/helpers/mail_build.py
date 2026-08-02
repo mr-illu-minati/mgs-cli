@@ -38,6 +38,20 @@ def file_attachment(path: str) -> dict:
     }
 
 
+def parse_headers(raw: list[str] | None) -> list[dict]:
+    """Parse repeatable 'NAME: VALUE' custom headers. Graph only accepts x-* names."""
+    out = []
+    for item in raw or []:
+        name, sep, value = item.partition(":")
+        name, value = name.strip(), value.strip()
+        if not sep or not name:
+            raise UsageError(f"invalid header {item!r}; expected 'NAME: VALUE'")
+        if not name.lower().startswith("x-"):
+            raise UsageError(f"header {name!r} must start with X- (Graph custom-header rule)")
+        out.append({"name": name, "value": value})
+    return out
+
+
 def build_message(
     subject: str,
     body: str,
@@ -47,6 +61,8 @@ def build_message(
     cc: str | None,
     bcc: str | None,
     attach: list[str] | None,
+    from_addr: str | None = None,
+    headers: list[str] | None = None,
 ) -> dict:
     to_r, cc_r, bcc_r = parse_recipients(to), parse_recipients(cc), parse_recipients(bcc)
     if not (to_r or cc_r or bcc_r):
@@ -55,6 +71,11 @@ def build_message(
         "subject": subject or "",
         "body": {"contentType": "HTML" if html else "Text", "content": body or ""},
     }
+    if from_addr:
+        msg["from"] = {"emailAddress": {"address": from_addr}}
+    hdrs = parse_headers(headers)
+    if hdrs:
+        msg["internetMessageHeaders"] = hdrs
     if to_r:
         msg["toRecipients"] = to_r
     if cc_r:

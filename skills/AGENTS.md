@@ -33,7 +33,7 @@ mgs schema <service>       # properties, navigations, bound actions
 ## Services and helpers
 
 ### mail — Read, send, and manage Outlook mail
-- `mgs mail +send` — Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--draft])
+- `mgs mail +send` — Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--from] [--header] [--draft])
 - `mgs mail +read` — Read a message and render clean body/headers
 - `mgs mail +reply` — Reply to a message (threading handled by Graph)
 - `mgs mail +reply-all` — Reply-all to a message
