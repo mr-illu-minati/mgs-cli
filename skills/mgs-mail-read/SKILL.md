@@ -2,7 +2,7 @@
 name: mgs-mail-read
 description: "Mail: Read a message and render clean body/headers"
 metadata:
-  version: 0.8.1
+  version: 0.8.2
 ---
 
 # mail +read

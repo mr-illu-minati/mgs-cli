@@ -81,6 +81,11 @@ In **app-only** mode `/me/` has no meaning, so a mailbox is required: pass `--ma
 `MGS_DEFAULT_MAILBOX` as a fallback. Without either, mgs fails fast with a usage error instead
 of sending a doomed Graph call. `MGS_MAILBOX` is the env twin of the flag (flag wins).
 
+Related: `mgs mail +send` accepts `--from <address>` to send **as** a mailbox alias (requires
+the tenant's `SendFromAliasEnabled`) or another mailbox (requires Send As rights), and
+`--header 'X-Name: value'` (repeatable) for custom internet headers — Graph requires the
+`X-` name prefix.
+
 ## Using mgs with AI agents (any platform)
 
 `mgs` ships a generated, **agent-agnostic** skill set — no platform lock-in.

@@ -18,7 +18,7 @@
 
 | Skill | Description |
 |-------|-------------|
-| [mgs-mail-send](../skills/mgs-mail-send/SKILL.md) | Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--draft]) |
+| [mgs-mail-send](../skills/mgs-mail-send/SKILL.md) | Send an email (--to/--cc/--bcc --subject --body [--html] [--attach] [--from] [--header] [--draft]) |
 | [mgs-mail-read](../skills/mgs-mail-read/SKILL.md) | Read a message and render clean body/headers |
 | [mgs-mail-reply](../skills/mgs-mail-reply/SKILL.md) | Reply to a message (threading handled by Graph) |
 | [mgs-mail-reply-all](../skills/mgs-mail-reply-all/SKILL.md) | Reply-all to a message |

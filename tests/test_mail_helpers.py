@@ -140,3 +140,44 @@ def test_delta_url_with_mailbox(monkeypatch):
     assert delta_url("inbox", beta=False) == (
         "https://graph.microsoft.com/v1.0/users/box%40contoso.com/mailFolders/inbox/messages/delta"
     )
+
+
+def test_send_dry_run_with_from_and_header():
+    out = _run(
+        "+send",
+        [
+            "--to",
+            "a@x.com",
+            "--subject",
+            "Hi",
+            "--body",
+            "Yo",
+            "--from",
+            "sandbox-employeur@contoso.com",
+            "--header",
+            "X-Sandbox-Persona: employeur",
+            "--dry-run",
+        ],
+    )
+    msg = out["body"]["message"]
+    assert msg["from"]["emailAddress"]["address"] == "sandbox-employeur@contoso.com"
+    assert msg["internetMessageHeaders"] == [{"name": "X-Sandbox-Persona", "value": "employeur"}]
+
+
+def test_send_draft_dry_run_with_from():
+    out = _run(
+        "+send",
+        [
+            "--to",
+            "a@x.com",
+            "--subject",
+            "Hi",
+            "--body",
+            "Yo",
+            "--from",
+            "alias@contoso.com",
+            "--draft",
+            "--dry-run",
+        ],
+    )
+    assert out["body"]["from"]["emailAddress"]["address"] == "alias@contoso.com"

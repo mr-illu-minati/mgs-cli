@@ -2,7 +2,7 @@
 name: mgs-excel-append
 description: "Excel: Append a row to an Excel table"
 metadata:
-  version: 0.8.1
+  version: 0.8.2
 ---
 
 # excel +append
