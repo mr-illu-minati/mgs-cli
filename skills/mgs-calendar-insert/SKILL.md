@@ -2,7 +2,7 @@
 name: mgs-calendar-insert
 description: "Calendar: Create a calendar event (conflict-checked unless --no-conflict-check)"
 metadata:
-  version: 0.8.2
+  version: 0.8.3
 ---
 
 # calendar +insert

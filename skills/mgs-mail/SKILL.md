@@ -2,7 +2,7 @@
 name: mgs-mail
 description: "Mail: Read, send, and manage Outlook mail."
 metadata:
-  version: 0.8.2
+  version: 0.8.3
 ---
 
 # mail
@@ -24,6 +24,7 @@ mgs mail <verb> [flags]
 | [`+forward`](../mgs-mail-forward/SKILL.md) | Forward a message to new recipients |
 | [`+triage`](../mgs-mail-triage/SKILL.md) | Summarize unread mail (ranked, compact) for fast scanning |
 | [`+watch`](../mgs-mail-watch/SKILL.md) | Stream new mail as NDJSON via Graph delta polling |
+| [`+attachments`](../mgs-mail-attachments/SKILL.md) | List a message's attachments; --download DIR saves file attachments |
 
 ## Generic Verbs
 

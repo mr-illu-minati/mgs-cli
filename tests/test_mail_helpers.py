@@ -181,3 +181,33 @@ def test_send_draft_dry_run_with_from():
         ],
     )
     assert out["body"]["from"]["emailAddress"]["address"] == "alias@contoso.com"
+
+
+def test_attachments_dry_run():
+    out = _run("+attachments", ["AAA", "--dry-run"])
+    assert out["method"] == "GET"
+    assert out["url"].endswith("/me/messages/AAA/attachments")
+
+
+def test_registered_attachments_helper():
+    assert registry.get("message", "+attachments") is not None
+
+
+def test_save_attachments_writes_file_attachments(tmp_path):
+    import base64
+
+    from mgs.helpers.mail import save_attachments
+
+    items = [
+        {
+            "@odata.type": "#microsoft.graph.fileAttachment",
+            "name": "../evil/passeport.pdf",  # path traversal: only the basename survives
+            "contentType": "application/pdf",
+            "contentBytes": base64.b64encode(b"%PDF fake").decode(),
+        },
+        {"@odata.type": "#microsoft.graph.itemAttachment", "name": "nested.msg"},
+        {"@odata.type": "#microsoft.graph.fileAttachment", "name": "sans-bytes.txt"},
+    ]
+    saved = save_attachments(items, str(tmp_path))
+    assert saved == [str(tmp_path / "passeport.pdf")]
+    assert (tmp_path / "passeport.pdf").read_bytes() == b"%PDF fake"

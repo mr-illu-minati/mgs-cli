@@ -2,7 +2,7 @@
 name: mgs-teams-channels
 description: "Teams: List channels in a team"
 metadata:
-  version: 0.8.2
+  version: 0.8.3
 ---
 
 # teams +channels

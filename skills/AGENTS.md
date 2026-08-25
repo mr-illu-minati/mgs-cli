@@ -40,6 +40,7 @@ mgs schema <service>       # properties, navigations, bound actions
 - `mgs mail +forward` — Forward a message to new recipients
 - `mgs mail +triage` — Summarize unread mail (ranked, compact) for fast scanning
 - `mgs mail +watch` — Stream new mail as NDJSON via Graph delta polling
+- `mgs mail +attachments` — List a message's attachments; --download DIR saves file attachments
 
 ### calendar — Manage Outlook calendar events
 - `mgs calendar +agenda` — Show upcoming events (calendarView; expands recurrences)

@@ -25,6 +25,7 @@
 | [mgs-mail-forward](../skills/mgs-mail-forward/SKILL.md) | Forward a message to new recipients |
 | [mgs-mail-triage](../skills/mgs-mail-triage/SKILL.md) | Summarize unread mail (ranked, compact) for fast scanning |
 | [mgs-mail-watch](../skills/mgs-mail-watch/SKILL.md) | Stream new mail as NDJSON via Graph delta polling |
+| [mgs-mail-attachments](../skills/mgs-mail-attachments/SKILL.md) | List a message's attachments; --download DIR saves file attachments |
 | [mgs-calendar-agenda](../skills/mgs-calendar-agenda/SKILL.md) | Show upcoming events (calendarView; expands recurrences) |
 | [mgs-calendar-insert](../skills/mgs-calendar-insert/SKILL.md) | Create a calendar event (conflict-checked unless --no-conflict-check) |
 | [mgs-files-upload](../skills/mgs-files-upload/SKILL.md) | Upload a file (auto small PUT or chunked upload session for >4 MB) |

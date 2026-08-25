@@ -2,7 +2,7 @@
 name: mgs-shared
 description: "mgs CLI: Shared patterns for authentication, global flags, and output."
 metadata:
-  version: 0.8.2
+  version: 0.8.3
 ---
 
 # mgs — Shared Reference
