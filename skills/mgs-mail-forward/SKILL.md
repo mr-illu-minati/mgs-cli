@@ -2,7 +2,7 @@
 name: mgs-mail-forward
 description: "Mail: Forward a message to new recipients"
 metadata:
-  version: 0.8.2
+  version: 0.8.3
 ---
 
 # mail +forward

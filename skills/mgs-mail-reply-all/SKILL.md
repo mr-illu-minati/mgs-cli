@@ -2,7 +2,7 @@
 name: mgs-mail-reply-all
 description: "Mail: Reply-all to a message"
 metadata:
-  version: 0.8.2
+  version: 0.8.3
 ---
 
 # mail +reply-all

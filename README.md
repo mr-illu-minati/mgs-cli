@@ -53,7 +53,7 @@ mgs schema mail                                  # introspect a service
 ## Commands
 
 ```
-mail      list get create update delete  +send +read +reply +reply-all +forward +triage +watch
+mail      list get create update delete  +send +read +reply +reply-all +forward +triage +watch +attachments
 calendar  list get create update delete  +agenda +insert
 files     list get create update delete  +upload +download
 teams     list get create update delete  +send +channels +chats
@@ -85,6 +85,10 @@ Related: `mgs mail +send` accepts `--from <address>` to send **as** a mailbox al
 the tenant's `SendFromAliasEnabled`) or another mailbox (requires Send As rights), and
 `--header 'X-Name: value'` (repeatable) for custom internet headers — Graph requires the
 `X-` name prefix.
+
+Related: `mgs mail +attachments <id>` lists a message's attachments and, with
+`--download <dir>`, saves file attachments to disk (base64 decoded; only the basename
+of each attachment name is used, so a crafted name cannot escape the target folder).
 
 ## Using mgs with AI agents (any platform)
 

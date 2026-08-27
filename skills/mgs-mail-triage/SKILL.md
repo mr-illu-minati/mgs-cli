@@ -2,7 +2,7 @@
 name: mgs-mail-triage
 description: "Mail: Summarize unread mail (ranked, compact) for fast scanning"
 metadata:
-  version: 0.8.2
+  version: 0.8.3
 ---
 
 # mail +triage

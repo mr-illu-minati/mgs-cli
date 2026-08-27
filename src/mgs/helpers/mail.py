@@ -290,6 +290,75 @@ class WatchHelper:
             time.sleep(max(ns.interval, 1))
 
 
+def save_attachments(items: list[dict], directory: str) -> list[str]:
+    """Write Graph fileAttachments (base64 contentBytes) to disk; returns saved paths.
+
+    Only the basename of the attachment name is used (path-traversal safe); item and
+    reference attachments, or entries without contentBytes, are skipped."""
+    import base64
+    import os
+
+    saved: list[str] = []
+    os.makedirs(directory, exist_ok=True)
+    for item in items:
+        if item.get("@odata.type") != "#microsoft.graph.fileAttachment":
+            continue
+        content = item.get("contentBytes")
+        if not content:
+            continue
+        name = os.path.basename(item.get("name") or "attachment")
+        path = os.path.join(directory, name)
+        with open(path, "wb") as f:
+            f.write(base64.b64decode(content))
+        saved.append(path)
+    return saved
+
+
+class AttachmentsHelper:
+    name = "+attachments"
+    service = "message"
+    help = "List a message's attachments; --download DIR saves file attachments"
+
+    def add_arguments(self, p: argparse.ArgumentParser) -> None:
+        p.add_argument("id", help="Message id")
+        p.add_argument("--download", metavar="DIR", help="Save file attachments into DIR")
+        p.add_argument("--dry-run", action="store_true")
+        p.add_argument("--beta", action="store_true")
+
+    def run(self, token: str, ns: argparse.Namespace, opts: Opts) -> object:
+        from mgs.validate import encode_path_segment, validate_resource_name
+
+        validate_resource_name(ns.id)
+        path = resolve_user_path(f"/me/messages/{encode_path_segment(ns.id)}/attachments")
+        if opts.dry_run:
+            version = "beta" if opts.beta else "v1.0"
+            return {
+                "dryRun": True,
+                "method": "GET",
+                "url": f"https://graph.microsoft.com/{version}{path}",
+            }
+        from mgs.client import GraphClient
+
+        client = GraphClient(token, beta=opts.beta)
+        resp = client.request("GET", client.full_url(path))
+        items = resp.get("value", []) if isinstance(resp, dict) else []
+        listed = [
+            {
+                "id": a.get("id"),
+                "name": a.get("name"),
+                "contentType": a.get("contentType"),
+                "size": a.get("size"),
+                "isInline": a.get("isInline", False),
+                "type": a.get("@odata.type", ""),
+            }
+            for a in items
+        ]
+        out: dict = {"attachments": listed}
+        if ns.download:
+            out["saved"] = save_attachments(items, ns.download)
+        return out
+
+
 registry.register(SendHelper())
 registry.register(ReadHelper())
 registry.register(ReplyHelper())
@@ -297,3 +366,4 @@ registry.register(ReplyAllHelper())
 registry.register(ForwardHelper())
 registry.register(TriageHelper())
 registry.register(WatchHelper())
+registry.register(AttachmentsHelper())
